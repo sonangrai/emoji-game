@@ -18,6 +18,10 @@ const UserSchema: Schema = new Schema(
       required: [true, "Please provide an email"],
       unique: true,
     },
+    pin: {
+      type: String,
+      require: [true, "Pin is required"],
+    },
   },
   { timestamps: true }
 );
