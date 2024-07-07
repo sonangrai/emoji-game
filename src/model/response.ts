@@ -22,6 +22,7 @@ class ResponseObj {
   constructor(status: number, data: object, msg: string) {
     this.status = status;
     this.data = data;
+    this.meta = null;
     this.msg = msg;
   }
 
@@ -48,7 +49,7 @@ class ResponseObj {
 export default ResponseObj;
 
 //Server error
-export const serverError = (err, res) => {
+export const serverError = (err: any, res: any) => {
   let respObject = new ResponseObj(500, err, "Server Error Occurred");
   return res.status(500).send(respObject);
 };
