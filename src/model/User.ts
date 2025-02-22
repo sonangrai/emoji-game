@@ -1,10 +1,13 @@
 // models/User.ts
 import mongoose, { Document, Model, Schema } from "mongoose";
 
-export interface IUser extends Document {
+export type UserType = {
   nickname: string;
   email: string;
-}
+  pin: string;
+};
+
+type IUser = UserType & Document;
 
 const UserSchema: Schema = new Schema(
   {
@@ -20,7 +23,7 @@ const UserSchema: Schema = new Schema(
     },
     pin: {
       type: String,
-      require: [true, "Pin is required"],
+      required: [true, "Pin is required"],
     },
   },
   { timestamps: true }
