@@ -1,14 +1,20 @@
 import mongoose from "mongoose";
-import Room from "./Room";
 
 const UserSchema = new mongoose.Schema(
   {
-    Nickname: {
+    nickname: {
       type: String,
+      required: true,
+      unique: true,
     },
-    ActiveRoom: {
-      type: Object,
-      ref: Room,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    pin: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }
