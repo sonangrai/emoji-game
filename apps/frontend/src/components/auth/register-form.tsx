@@ -1,8 +1,10 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getUserByNickname } from "@/api/user";
 
 export function RegisterForm({
   className,
@@ -82,7 +84,7 @@ export function RegisterForm({
           </form>
           <div className="relative hidden bg-muted md:block">
             <img
-              src="/placeholder.svg"
+              src="https://cdn.pixabay.com/photo/2015/02/28/09/03/emoji-653309_1280.jpg"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
