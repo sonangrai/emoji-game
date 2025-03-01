@@ -31,7 +31,8 @@ export const createUser = async (req: Request, res: Response) => {
     let respObject = new ResponseObj(200, newUser, "User created successfully");
     return res.status(200).send(respObject);
   } catch (error) {
-    
+    const errorResponse = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(errorResponse);
   }
 };
 
@@ -40,8 +41,9 @@ export const createUser = async (req: Request, res: Response) => {
  */
 export const getUser = async (req: Request, res: Response) => {
   let nickname = req.params.nickname;
+  console.log(nickname);
   try {
-    let user = await User.findOne({ Nickname: nickname });
+    let user = await User.findOne({ nickname: nickname });
     if (!user) {
       let respObject = new ResponseObj(404, {}, "User not Found");
       return res.status(404).send(respObject);
@@ -50,5 +52,7 @@ export const getUser = async (req: Request, res: Response) => {
     let respObject = new ResponseObj(200, user, "User found");
     return res.status(200).send(respObject);
   } catch (error) {
+    const errorResponse = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(errorResponse);
   }
 };
