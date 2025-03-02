@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "dotenv -e .env concurrently \"pnpm --filter frontend run dev\" \"pnpm --filter backend run dev\"",
-    "build": "dotenv -e .env pnpm --filter frontend run build && pnpm --filter backend run build"
+    "build": "pnpm --filter frontend run build && pnpm --filter backend run build",
+    "build:fe": "pnpm --filter frontend run build",
+    "build:be": "pnpm --filter backend run build",
+    "start": "dotenv -e .env concurrently \"pnpm --filter frontend run start\" \"pnpm --filter backend run start\""
   },
   "keywords": [],
   "author": "",

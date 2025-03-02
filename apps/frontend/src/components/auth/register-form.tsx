@@ -41,11 +41,11 @@ export function RegisterForm({
     registerMutation.mutateAsync(
       { ...values, pin: String(values.pin) },
       {
-        onSuccess: (data) => {
-          console.log(data);
+        onSuccess: () => {
+          toast.success("User created successfully");
         },
-        onError: (error: any) => {
-          toast.error(error.msg);
+        onError: () => {
+          // toast.error(error.msg);
         },
       }
     );
