@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import Room from "../model/Room";
-import ResponseObj, { serverError } from "./response";
+import ResponseObj from "./response";
 import { io } from "..";
 import {
   roomAddedEvent,
@@ -32,9 +32,7 @@ export const createRoom = async (req: Request, res: Response) => {
     let respObject = new ResponseObj(200, newRoom, "Room created successfully");
     io.sockets.emit(roomAddedEvent, respObject);
     return res.status(200).send(respObject);
-  } catch (error) {
-    serverError(error, res);
-  }
+  } catch (error) {}
 };
 
 /**
@@ -48,9 +46,7 @@ export const getLatestRooms = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 });
     let respObject = new ResponseObj(200, rooms, "Rooms fetched successfully");
     return res.status(200).send(respObject);
-  } catch (error) {
-    serverError(error, res);
-  }
+  } catch (error) {}
 };
 
 /**
@@ -63,11 +59,9 @@ export const getRoom = async (req: Request, res: Response) => {
       .select(["-password"])
       .limit(10)
       .sort({ createdAt: -1 });
-    let respObject = new ResponseObj(200, rooms, "Room fetched successfully");
+    let respObject = new ResponseObj(200, {}, "Room fetched successfully");
     return res.status(200).send(respObject);
-  } catch (error) {
-    serverError(error, res);
-  }
+  } catch (error) {}
 };
 
 /**
@@ -87,7 +81,7 @@ export const joinRoom = async (req: Request, res: Response) => {
     //Find room
     let room = await Room.findOne({ _id: roomId });
     if (!room) {
-      let resObj = new ResponseObj(404, null, "Room Not Found");
+      let resObj = new ResponseObj(404, {}, "Room Not Found");
       return res.status(404).send(resObj);
     }
 
@@ -102,19 +96,13 @@ export const joinRoom = async (req: Request, res: Response) => {
       { $push: { players: player } },
       { new: true }
     );
-    let resObj = new ResponseObj(
-      200,
-      addedUser,
-      `${player.Nickname} Joined the Room`
-    );
+    let resObj = new ResponseObj(200, {}, `${player.Nickname} Joined the Room`);
 
     //Emitting User joined room event
     io.sockets.emit(userJoinedEvent, resObj);
 
     return res.status(200).send(resObj);
-  } catch (error) {
-    serverError(error, res);
-  }
+  } catch (error) {}
 };
 
 /**
@@ -132,7 +120,7 @@ export const leaveRoom = async (req: Request, res: Response) => {
     //Find room
     let room = await Room.findOne({ _id: roomId });
     if (!room) {
-      let resObj = new ResponseObj(404, null, "Room Not Found");
+      let resObj = new ResponseObj(404, {}, "Room Not Found");
       return res.status(404).send(resObj);
     }
 
@@ -145,17 +133,11 @@ export const leaveRoom = async (req: Request, res: Response) => {
       { players: filterRoom },
       { new: true }
     );
-    let resObj = new ResponseObj(
-      200,
-      addedUser,
-      `${player.Nickname} left the Room`
-    );
+    let resObj = new ResponseObj(200, {}, `${player.Nickname} left the Room`);
 
     //Emitting User joined room event
     io.sockets.emit(userLeaveEvent, resObj);
 
     return res.status(200).send(resObj);
-  } catch (error) {
-    serverError(error, res);
-  }
+  } catch (error) {}
 };
