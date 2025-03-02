@@ -10,7 +10,11 @@ router.get("/:nickname", getUser);
 //Add user
 router.post(
   "/",
-  [check("Nickname").notEmpty().withMessage("Nickname is Required")],
+  [
+    check("nickname").notEmpty().withMessage("Nickname is Required"),
+    check("email").notEmpty().withMessage("Email is Required"),
+    check("pin").notEmpty().withMessage("PIN is Required"),
+  ],
   createUser
 );
 
