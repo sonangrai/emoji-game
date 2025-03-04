@@ -9,13 +9,11 @@ import next from "next";
 import path from "path";
 
 const PORT = process.env.PORT;
-console.log(PORT);
 
 const dev = process.env.NODE_ENV !== "production";
 
 const nextApp = next({ dev, dir: path.join(__dirname, "../../frontend") });
 const handle = nextApp.getRequestHandler();
-console.log(nextApp);
 
 nextApp.prepare().then(() => {
   const app = express();
