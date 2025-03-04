@@ -1,5 +1,6 @@
-export const BASE_URL =
+export const BASE_URL = `http://localhost:${process.env.PORT || 4000}`;
+
+export const API_URL =
   process.env.NODE_ENV !== "production"
-    ? `http://localhost:${process.env.PORT || 4000}`
+    ? `${BASE_URL}/api`
     : process.env.BASE_URL;
-export const API_URL = `${BASE_URL}/api`;
