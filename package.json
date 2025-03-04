@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "dotenv -e .env concurrently \"pnpm --filter frontend run dev\" \"pnpm --filter backend run dev\"",
-    "build": "pnpm --filter frontend run build && pnpm --filter backend run build",
-    "build:fe": "pnpm --filter frontend run build",
-    "build:be": "pnpm --filter backend run build",
-    "start": "dotenv -e .env concurrently \"pnpm --filter frontend run start\" \"pnpm --filter backend run start\""
+    "dev": "concurrently \"npm run dev --workspace=apps/frontend\" \"npm run dev --workspace=apps/backend\"",
+    "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
+    "start": "npm run start --workspace=apps/backend"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +15,13 @@
     "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^8.0.0"
+  },
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.8.2"
   }
 }

@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import Room from "../model/Room";
 import ResponseObj from "./response";
-import { io } from "..";
 import {
   roomAddedEvent,
   userJoinedEvent,
@@ -30,7 +29,6 @@ export const createRoom = async (req: Request, res: Response) => {
   try {
     await newRoom.save();
     let respObject = new ResponseObj(200, newRoom, "Room created successfully");
-    io.sockets.emit(roomAddedEvent, respObject);
     return res.status(200).send(respObject);
   } catch (error) {}
 };
@@ -98,9 +96,6 @@ export const joinRoom = async (req: Request, res: Response) => {
     );
     let resObj = new ResponseObj(200, {}, `${player.Nickname} Joined the Room`);
 
-    //Emitting User joined room event
-    io.sockets.emit(userJoinedEvent, resObj);
-
     return res.status(200).send(resObj);
   } catch (error) {}
 };
@@ -134,9 +129,6 @@ export const leaveRoom = async (req: Request, res: Response) => {
       { new: true }
     );
     let resObj = new ResponseObj(200, {}, `${player.Nickname} left the Room`);
-
-    //Emitting User joined room event
-    io.sockets.emit(userLeaveEvent, resObj);
 
     return res.status(200).send(resObj);
   } catch (error) {}

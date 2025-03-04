@@ -1,49 +1,42 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import http from "http";
-import { Server } from "socket.io";
-dotenv.config();
+
+dotenv.config({ path: "../../.env" });
 import routes from "./routes";
 import connectDb from "./db/dbConnect";
-
-const app = express();
-app.use(cors());
-
-//Validating json usage
-app.use(express.json());
+import next from "next";
+import path from "path";
 
 const PORT = process.env.PORT;
+console.log(PORT);
 
-/**
- * Creating an http server
- */
-let server = http.createServer(app);
+const dev = process.env.NODE_ENV !== "production";
 
-//Implemented the server in the socket
-export const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+const nextApp = next({ dev, dir: path.join(__dirname, "../../frontend") });
+const handle = nextApp.getRequestHandler();
+console.log(nextApp);
 
-/**
- * Routes
- */
-app.use("/api/", routes);
+nextApp.prepare().then(() => {
+  const app = express();
 
-// io.on("connection", function (socket) {
-//   console.log("A user connected");
+  app.use(cors());
 
-//   //Whenever someone disconnects this piece of code executed
-//   socket.on("disconnect", function () {
-//     console.log("A user disconnected");
-//   });
-// });
+  //Validating json usage
+  app.use(express.json());
 
-// DB
-connectDb();
+  /**
+   * Routes
+   */
+  app.use("/api/", routes);
 
-server.listen(PORT, () => {
-  console.log("Server Up in PORT:", PORT);
+  connectDb();
+
+  app.get("*", (req, res) => {
+    return handle(req, res);
+  });
+
+  app.listen(PORT, () => {
+    console.log("Server Up in PORT:", PORT);
+  });
 });
