@@ -19,6 +19,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const registerSchema = z.object({
   nickname: z.string().min(4),
@@ -169,9 +170,9 @@ export function RegisterForm({
                 </div>
                 <div className="text-center text-sm">
                   Already have have an account?{" "}
-                  <a href="#" className="underline underline-offset-4">
+                  <Link href="/login" className="underline underline-offset-4">
                     Log In
-                  </a>
+                  </Link>
                 </div>
               </div>
             </form>
