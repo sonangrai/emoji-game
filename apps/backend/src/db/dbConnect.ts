@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 const connectDb = async () => {
   try {
     let DB_URI: string = process.env.DB!;
-    console.log(DB_URI);
     mongoose.set("strictQuery", false);
     await mongoose.connect(DB_URI);
     console.log("|_____DB connected_____|");
