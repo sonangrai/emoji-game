@@ -1,4 +1,5 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +18,8 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { Response } from "../../../../packages/shared/src";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z.object({
   nickname: z.string().min(4),
@@ -36,6 +39,12 @@ export function RegisterForm({
       pin: "",
     },
   });
+  const router = useRouter();
+
+  const registerMutation = useMutation({
+    mutationKey: ["user", "create"],
+    mutationFn: createUser,
+  });
 
   function onSubmit(values: z.infer<typeof registerSchema>) {
     registerMutation.mutateAsync(
@@ -43,18 +52,14 @@ export function RegisterForm({
       {
         onSuccess: () => {
           toast.success("User created successfully");
+          router.push("/login");
         },
-        onError: () => {
-          // toast.error(error.msg);
+        onError: (error: any) => {
+          toast.error(error.msg);
         },
       }
     );
   }
-
-  const registerMutation = useMutation({
-    mutationKey: ["user", "create"],
-    mutationFn: createUser,
-  });
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
