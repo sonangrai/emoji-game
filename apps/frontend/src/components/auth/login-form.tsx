@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { createUser } from "@/api/user";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -17,8 +15,6 @@ import {
 } from "../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const registerSchema = z.object({
@@ -37,7 +33,6 @@ export function LoginForm({
       pin: "",
     },
   });
-  const router = useRouter();
 
   function onSubmit(values: z.infer<typeof registerSchema>) {
     console.log(values);
@@ -138,7 +133,7 @@ export function LoginForm({
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don't have have an account?{" "}
+                  Don{"'"}t have have an account?{" "}
                   <Link
                     href="/register"
                     className="underline underline-offset-4"
