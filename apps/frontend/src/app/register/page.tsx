@@ -1,5 +1,12 @@
 import { RegisterForm } from "@/components/auth/register-form";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Register - GEmoji",
+  description: "Register to your GEmoji",
+};
+
 function page() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
