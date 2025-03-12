@@ -16,6 +16,10 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { loginUser } from "@/api/user";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const registerSchema = z.object({
   authType: z.string().min(1),
@@ -26,6 +30,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -34,8 +39,25 @@ export function LoginForm({
     },
   });
 
+  const loginMutation = useMutation({
+    mutationKey: ["login"],
+    mutationFn: loginUser,
+  });
+
   function onSubmit(values: z.infer<typeof registerSchema>) {
-    console.log(values);
+    return loginMutation.mutateAsync(values, {
+      onError: (error: any) => {
+        toast.error(error.msg);
+      },
+      onSuccess: (data) => {
+        const d = new Date();
+        d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = `player=${data.data.email}; ${expires}; path=/; SameSite=Lax`;
+
+        router.push("/rooms");
+      },
+    });
   }
 
   return (
@@ -46,7 +68,7 @@ export function LoginForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className="p-6">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Join GEmoji</h1>
+                  <h1 className="text-2xl font-bold">Login GEmoji</h1>
                   <p className="text-balance text-muted-foreground">
                     Login to your GEmoji
                   </p>
