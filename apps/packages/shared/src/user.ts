@@ -3,3 +3,8 @@ export type UserPayload = {
   email: string;
   pin: string;
 };
+
+export type LoginPayload = {
+  authType: string;
+  pin: string;
+};
