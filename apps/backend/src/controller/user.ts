@@ -43,7 +43,7 @@ export const createUser = async (req: Request, res: Response) => {
  */
 export const getUser = async (req: Request, res: Response) => {
   let nickname = req.params.nickname;
-  console.log(nickname);
+
   try {
     let user = await User.findOne({ nickname: nickname });
     if (!user) {
@@ -53,6 +53,31 @@ export const getUser = async (req: Request, res: Response) => {
 
     let respObject = new ResponseObj(200, user, "User found");
     return res.status(200).send(respObject);
+  } catch (error) {
+    const errorResponse = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(errorResponse);
+  }
+};
+
+/**
+ * Login
+ */
+export const loginUser = async (req: Request, res: Response) => {
+  const { authType, pin } = req.body;
+
+  try {
+    const user = await User.findOne({
+      $or: [{ email: authType }, { nickname: authType }],
+      pin: pin,
+    }).select("-pin");
+
+    if (!user) {
+      const resObj = new ResponseObj(404, {}, "User not found");
+      return res.status(404).send(resObj);
+    }
+
+    const resObj = new ResponseObj(200, user, "User found");
+    return res.status(200).send(resObj);
   } catch (error) {
     const errorResponse = new ResponseObj(500, {}, "Internal Server Error");
     return res.status(500).send(errorResponse);
