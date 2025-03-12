@@ -53,7 +53,9 @@ export function LoginForm({
         const d = new Date();
         d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
         let expires = "expires=" + d.toUTCString();
-        document.cookie = `player=${data.data.email}; ${expires}; path=/; SameSite=Lax`;
+        document.cookie = `player=${encodeURIComponent(
+          JSON.stringify(data.data)
+        )}; ${expires}; path=/; SameSite=Lax`;
 
         router.push("/play");
       },
