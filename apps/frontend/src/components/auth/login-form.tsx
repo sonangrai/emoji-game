@@ -55,7 +55,7 @@ export function LoginForm({
         let expires = "expires=" + d.toUTCString();
         document.cookie = `player=${data.data.email}; ${expires}; path=/; SameSite=Lax`;
 
-        router.push("/rooms");
+        router.push("/play");
       },
     });
   }
