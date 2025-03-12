@@ -1,5 +1,5 @@
 import { API_URL } from "./config";
-import { UserPayload } from "../../../packages/shared/src";
+import { LoginPayload, UserPayload } from "../../../packages/shared/src";
 
 export const getUserByNickname = async (nickname: string) => {
   const res = fetch(`${API_URL}/user/${nickname}`, {
@@ -11,6 +11,23 @@ export const getUserByNickname = async (nickname: string) => {
 
 export const createUser = async (payload: UserPayload) => {
   const res = await fetch(`${API_URL}/user`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw errorData;
+  }
+
+  return res.json();
+};
+
+export const loginUser = async (payload: LoginPayload) => {
+  const res = await fetch(`${API_URL}/user/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
