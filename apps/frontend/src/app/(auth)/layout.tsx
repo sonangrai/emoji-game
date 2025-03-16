@@ -1,14 +1,28 @@
 "use client";
 import UserHeader from "@/components/common/user-header";
-import { getCookie } from "@/lib/cookie";
-import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-function LoginLayout({ children }: { children: React.ReactNode }) {
-  const loggedIn: boolean = useMemo(() => {
-    return getCookie("player") !== "";
-  }, []);
+function AuthLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  if (!loggedIn) document.location.href = "/login";
+  useEffect(() => {
+    // Check for auth cookie
+    const authCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("player="));
+
+    if (!authCookie) {
+      router.replace("/login"); // Redirect to login if not authenticated
+    } else {
+      setIsAuthenticated(true); // Allow access
+    }
+  }, [router]);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>; // Prevent flash of protected content
+  }
 
   return (
     <>
@@ -18,4 +32,4 @@ function LoginLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default LoginLayout;
+export default AuthLayout;
