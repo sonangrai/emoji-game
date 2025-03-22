@@ -48,7 +48,7 @@ export const createRoom = async (req: Request, res: Response) => {
 export const getMyRoom = async (req: Request, res: Response) => {
   const userId = req.params.id;
   try {
-    const room = await Room.findOne({
+    const room = await Room.find({
       "players._id": userId,
     });
 
