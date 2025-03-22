@@ -15,26 +15,32 @@ const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev, dir: path.join(__dirname, "../../frontend") });
 const handle = nextApp.getRequestHandler();
 
-nextApp.prepare().then(() => {
-  const app = express();
+const app = express();
 
-  app.use(cors());
+app.use(cors());
 
-  //Validating json usage
-  app.use(express.json());
+//Validating json usage
+app.use(express.json());
 
-  /**
-   * Routes
-   */
-  app.use("/api/", routes);
+/**
+ * Routes
+ */
+app.use("/api/", routes);
 
-  connectDb();
+connectDb();
 
-  app.get("*", (req, res) => {
-    return handle(req, res);
+if (!dev) {
+  nextApp.prepare().then(() => {
+    app.get("*", (req, res) => {
+      return handle(req, res);
+    });
+
+    app.listen(PORT, () => {
+      console.log("Server Up in PORT:", PORT);
+    });
   });
+}
 
-  app.listen(PORT, () => {
-    console.log("Server Up in PORT:", PORT);
-  });
+app.listen(PORT, () => {
+  console.log("Server <Dev> Up in PORT:", PORT);
 });
