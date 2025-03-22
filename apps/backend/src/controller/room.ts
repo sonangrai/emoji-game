@@ -22,6 +22,7 @@ export const createRoom = async (req: Request, res: Response) => {
         _id: req.body._id,
         owner: true,
         score: 0,
+        online: true,
       },
     ],
   };
@@ -32,77 +33,31 @@ export const createRoom = async (req: Request, res: Response) => {
     await newRoom.save();
     let respObject = new ResponseObj(200, newRoom, "Room created successfully");
     return res.status(200).send(respObject);
-  } catch (error) {}
+  } catch (error) {
+    let respObject = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(respObject);
+  }
 };
 
 /**
- * Get all rooms
+ *
+ * @param req
+ * @param res
+ * @returns
  */
-export const getLatestRooms = async (req: Request, res: Response) => {
+export const getMyRoom = async (req: Request, res: Response) => {
+  const userId = req.params.id;
   try {
-    let rooms = await Room.find()
-      .select(["-password"])
-      .limit(10)
-      .sort({ createdAt: -1 });
-    let respObject = new ResponseObj(200, rooms, "Rooms fetched successfully");
-    return res.status(200).send(respObject);
-  } catch (error) {}
-};
+    const room = await Room.findOne({
+      "players._id": userId,
+    });
 
-/**
- * Get room by id
- */
-export const getRoom = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  try {
-    let rooms = await Room.findById(id)
-      .select(["-password"])
-      .limit(10)
-      .sort({ createdAt: -1 });
-    let respObject = new ResponseObj(200, {}, "Room fetched successfully");
-    return res.status(200).send(respObject);
-  } catch (error) {}
-};
-
-/**
- * Join Room
- */
-export const joinRoom = async (req: Request, res: Response) => {
-  const roomId = req.params.rid; //The room id
-  const password = req.body.password;
-  //The player object
-  const player = {
-    _id: req.body._id,
-    Nickname: req.body.Nickname,
-    score: 0,
-  };
-
-  try {
-    //Find room
-    let room = await Room.findOne({ _id: roomId });
-    if (!room) {
-      let resObj = new ResponseObj(404, {}, "Room Not Found");
-      return res.status(404).send(resObj);
+    if (room) {
+      let respObject = new ResponseObj(200, room, "Room fetched successfully");
+      return res.status(200).send(respObject);
     }
 
-    //Password checking
-    if (password !== room.password) {
-      let resObj = new ResponseObj(401, {}, "Password don't Match");
-      return res.status(401).send(resObj);
-    }
-
-    let addedUser = await Room.findOneAndUpdate(
-      { _id: roomId },
-      { $push: { players: player } },
-      { new: true }
-    );
-    let resObj = new ResponseObj(200, {}, `${player.Nickname} Joined the Room`);
-
-    return res.status(200).send(resObj);
+    let respObject = new ResponseObj(404, {}, "Room not found");
+    return res.status(404).send(respObject);
   } catch (error) {}
 };
-
-/**
- * Exit Room
- */
-export const leaveRoom = async (req: Request, res: Response) => {};

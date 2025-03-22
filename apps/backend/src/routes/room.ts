@@ -1,12 +1,6 @@
 import Router from "express";
 import { check } from "express-validator";
-import {
-  createRoom,
-  getLatestRooms,
-  getRoom,
-  joinRoom,
-  leaveRoom,
-} from "../controller/room";
+import { createRoom, getMyRoom } from "../controller/room";
 
 const router = Router();
 
@@ -21,16 +15,7 @@ router.post(
   createRoom
 );
 
-//Get All Rooms
-router.get("/", getLatestRooms);
-
-//Get All Rooms
-router.get("/:id", getRoom);
-
-//Enter a room
-router.post("/join/:rid", joinRoom);
-
-//Leave a room
-router.post("/leave/:rid", leaveRoom);
+//Get My Rooms
+router.get("/:id", getMyRoom);
 
 export default router;
