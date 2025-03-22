@@ -9,7 +9,7 @@ const router = Router();
 router.use("/user", user);
 
 //ROOM ROUTES
-// router.use("/room", room);
+router.use("/room", room);
 
 //EMOJIS ROUTES
 // router.use("/emojis", emojis);

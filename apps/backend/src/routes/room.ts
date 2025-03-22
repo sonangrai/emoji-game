@@ -14,6 +14,7 @@ const router = Router();
 router.post(
   "/",
   [
+    check("_id").notEmpty().withMessage("User ID is required"),
     check("name").notEmpty().withMessage("This is a required field"),
     check("password").notEmpty().withMessage("Password is required"),
   ],

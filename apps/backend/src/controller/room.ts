@@ -2,11 +2,6 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import Room from "../model/Room";
 import ResponseObj from "./response";
-import {
-  roomAddedEvent,
-  userJoinedEvent,
-  userLeaveEvent,
-} from "../events/room";
 
 /**
  * Create a new room
@@ -22,6 +17,13 @@ export const createRoom = async (req: Request, res: Response) => {
   let payload = {
     name: req.body.name,
     password: req.body.password,
+    players: [
+      {
+        _id: req.body._id,
+        owner: true,
+        score: 0,
+      },
+    ],
   };
 
   let newRoom = new Room(payload);
@@ -103,33 +105,4 @@ export const joinRoom = async (req: Request, res: Response) => {
 /**
  * Exit Room
  */
-export const leaveRoom = async (req: Request, res: Response) => {
-  let roomId = req.params.rid; //The room id
-  //The player object
-  let player = {
-    Nickname: req.body.Nickname,
-    score: 0,
-  };
-
-  try {
-    //Find room
-    let room = await Room.findOne({ _id: roomId });
-    if (!room) {
-      let resObj = new ResponseObj(404, {}, "Room Not Found");
-      return res.status(404).send(resObj);
-    }
-
-    let filterRoom = room.players.filter(
-      (el) => el.Nickname !== player.Nickname
-    );
-
-    let addedUser = await Room.findOneAndUpdate(
-      { _id: roomId },
-      { players: filterRoom },
-      { new: true }
-    );
-    let resObj = new ResponseObj(200, {}, `${player.Nickname} left the Room`);
-
-    return res.status(200).send(resObj);
-  } catch (error) {}
-};
+export const leaveRoom = async (req: Request, res: Response) => {};
