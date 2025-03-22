@@ -1,5 +1,14 @@
 import mongoose from "mongoose";
 
+const playerSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  score: { type: Number, default: 0 },
+  owner: { type: Boolean, default: false },
+});
+
 const RoomSchema = new mongoose.Schema(
   {
     name: {
@@ -9,13 +18,7 @@ const RoomSchema = new mongoose.Schema(
       type: String,
     },
     players: {
-      type: [
-        {
-          _id: String,
-          Nickname: String,
-          score: Number,
-        },
-      ],
+      type: [playerSchema],
     },
   },
   { timestamps: true }
