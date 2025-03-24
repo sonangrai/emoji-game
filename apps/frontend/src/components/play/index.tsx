@@ -1,4 +1,5 @@
 import { Button } from "../ui/button";
+import CreateRoom from "./create-room";
 import MyRooms from "./my-rooms";
 
 function PlayPage() {
@@ -6,7 +7,7 @@ function PlayPage() {
     <div className="">
       <div className="flex items-center justify-center gap-2 mb-4">
         <Button variant="outline">Join Room</Button>
-        <Button>Create Room</Button>
+        <CreateRoom />
       </div>
       <MyRooms />
     </div>
