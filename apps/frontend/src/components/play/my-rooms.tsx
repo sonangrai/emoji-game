@@ -15,24 +15,22 @@ function MyRooms() {
     enabled: !!player,
   });
 
-  console.log(data);
-
   if (isLoading) return <>Loading</>;
 
   return (
     <Card className="py-4 w-[700px] gap-2">
-      <CardHeader>My Rooms</CardHeader>
+      <CardHeader className="font-bold">My Rooms</CardHeader>
 
       <CardContent>
         <div className="flex flex-col gap-2">
           {data?.data?.map((room: Room) => (
             <div
               key={room._id}
-              className="flex items-center justify-between p-2 border rounded-md"
+              className="flex items-center justify-between px-4 py-2 border rounded-md"
             >
               <div className="flex items-center gap-1">
-                <h3 className="text-lg font-semibold">{room.name}</h3>
-                <p className="text-xs">({room.players.length}) Players</p>
+                <h3 className="text-md">{room.name}</h3>
+                <p className="text-xs">({room.players.length}) p</p>
               </div>
               <div>
                 <Button variant="outline">Join</Button>
