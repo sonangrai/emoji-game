@@ -1,12 +1,13 @@
 "use client";
+
 import { Send } from "lucide-react";
 import ChatBubble from "../common/chat-bubble";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import React, { useState } from "react";
-import { set } from "react-hook-form";
+import React, { useEffect, useRef, useState } from "react";
 
 function ChatBox() {
+  const msgRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState([
     {
@@ -30,6 +31,15 @@ function ChatBox() {
       },
     },
   ]);
+
+  useEffect(() => {
+    if (input === "" && msgRef.current) {
+      msgRef.current.scrollTo({
+        top: msgRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages, input]);
 
   function submitHandle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -56,8 +66,11 @@ function ChatBox() {
         <strong>Jhola Gang</strong>
         <span className="text-xs">1 / 10</span>
       </div>
-      <div className="max-h-full overflow-y-auto h-[calc(100%-70px)]">
-        <div className="flex flex-col mt-4 justify-end gap-4">
+      <div
+        className="max-h-full overflow-y-auto h-[calc(100%-70px)] no-scrollbar"
+        ref={msgRef}
+      >
+        <div className="flex flex-col py-4 justify-end gap-4">
           {messages.map((message) => (
             <ChatBubble key={message.id} {...message} />
           ))}
