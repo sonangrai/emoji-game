@@ -41,6 +41,7 @@ if (!dev) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log("Server <Dev> Up in PORT:", PORT);
-});
+if (dev)
+  app.listen(PORT, () => {
+    console.log("Server <Dev> Up in PORT:", PORT);
+  });
