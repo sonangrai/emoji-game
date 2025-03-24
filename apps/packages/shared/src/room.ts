@@ -14,3 +14,9 @@ export type Room = {
   updatedAt: string;
   __v: number;
 };
+
+export type RoomCreatePayload = {
+  name: string;
+  password: string;
+  _id: string;
+};
