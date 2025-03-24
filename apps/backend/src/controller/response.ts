@@ -28,7 +28,7 @@ class ResponseObj {
 
   // For Creating pagination Meta data
   setMeta(total: number, offset: number, limit: number) {
-    const page = offset / limit + 1;
+    const page = Math.ceil(offset / limit) + 1;
 
     const meta: IResponseMeta = {
       total: total,
@@ -40,11 +40,10 @@ class ResponseObj {
     };
 
     meta["hasPrevious"] = page != 1 ? true : false;
-    meta["hasNext"] = Math.ceil(total / limit) >= page;
+    meta["hasNext"] = total / limit >= page;
 
     this.meta = meta;
   }
 }
 
 export default ResponseObj;
-
