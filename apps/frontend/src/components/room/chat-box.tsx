@@ -62,12 +62,12 @@ function ChatBox() {
 
   return (
     <div className="rounded-sm border p-2 w-md h-[80dvh]">
-      <div className="sticky top-0 h-[20px] flex justify-between items-center">
+      <div className="sticky top-0 h-[30px] flex justify-between items-center pb-[10px]">
         <strong>Jhola Gang</strong>
         <span className="text-xs">1 / 10</span>
       </div>
       <div
-        className="max-h-full overflow-y-auto h-[calc(100%-70px)] no-scrollbar"
+        className="max-h-full overflow-y-auto h-[calc(100%-80px)] no-scrollbar"
         ref={msgRef}
       >
         <div className="flex flex-col py-4 justify-end gap-4">
