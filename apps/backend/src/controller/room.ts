@@ -47,13 +47,21 @@ export const createRoom = async (req: Request, res: Response) => {
  */
 export const getMyRoom = async (req: Request, res: Response) => {
   const userId = req.params.id;
+  const offset = Number(req.query.offset) || 0;
+  const limit = Number(req.query.limit) || 10;
+
   try {
+    const roomItemsLength = await Room.countDocuments();
+
     const room = await Room.find({
       "players._id": userId,
-    });
+    })
+      .limit(limit)
+      .skip(offset);
 
     if (room) {
       let respObject = new ResponseObj(200, room, "Room fetched successfully");
+      respObject.setMeta(roomItemsLength, offset, limit);
       return res.status(200).send(respObject);
     }
 
