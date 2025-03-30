@@ -69,3 +69,27 @@ export const getMyRoom = async (req: Request, res: Response) => {
     return res.status(404).send(respObject);
   } catch (error) {}
 };
+
+/**
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+export const getRoomById = async (req: Request, res: Response) => {
+  const roomId = req.params.id;
+  try {
+    const roomInfo = await Room.findById(roomId);
+    if (roomInfo) {
+      const respObject = new ResponseObj(
+        200,
+        roomInfo,
+        "Room fetched successfully"
+      );
+      return res.status(200).send(respObject);
+    }
+
+    const respObject = new ResponseObj(404, {}, "Room not found");
+    return res.status(404).send(respObject);
+  } catch (error) {}
+};
