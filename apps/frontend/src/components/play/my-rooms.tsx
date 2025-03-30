@@ -4,7 +4,9 @@ import { getCookie } from "@/lib/cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Room } from "../../../../packages/shared/src";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 function MyRooms() {
   const player = getCookie("player");
@@ -33,7 +35,16 @@ function MyRooms() {
                 <p className="text-xs">({room.players.length}) p</p>
               </div>
               <div>
-                <Button variant="outline">Join</Button>
+                <Link
+                  href={`/room/${room._id}`}
+                  className={cn(
+                    buttonVariants({
+                      variant: "outline",
+                    })
+                  )}
+                >
+                  Join
+                </Link>
               </div>
             </div>
           ))}
