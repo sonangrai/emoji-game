@@ -1,6 +1,6 @@
 import Router from "express";
 import { check } from "express-validator";
-import { createRoom, getMyRoom } from "../controller/room";
+import { createRoom, getMyRoom, getRoomById } from "../controller/room";
 
 const router = Router();
 
@@ -17,5 +17,8 @@ router.post(
 
 //Get My Rooms
 router.get("/:id", getMyRoom);
+
+// Get room by ID
+router.get("/detail/:id", getRoomById);
 
 export default router;
