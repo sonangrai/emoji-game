@@ -5,8 +5,13 @@ import ChatBubble from "../common/chat-bubble";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import React, { useEffect, useRef, useState } from "react";
+import { Room } from "../../../../packages/shared/src";
 
-function ChatBox() {
+type ChatBoxType = {
+  room: Room;
+};
+
+function ChatBox({ room }: ChatBoxType) {
   const msgRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState([
@@ -63,7 +68,10 @@ function ChatBox() {
   return (
     <div className="rounded-sm border p-2 w-md h-[80dvh]">
       <div className="sticky top-0 h-[30px] flex justify-between items-center pb-[10px]">
-        <strong>Jhola Gang</strong>
+        <strong>
+          {room.name}{" "}
+          <small>({room.players.filter((el) => el.online).length})</small>
+        </strong>
         <span className="text-xs">1 / 10</span>
       </div>
       <div

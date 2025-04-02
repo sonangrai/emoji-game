@@ -6,10 +6,10 @@ export const metadata: Metadata = {
   description: "Let GEmoji",
 };
 
-function page() {
+function page({ params }: { params: { id: string } }) {
   return (
     <div className="flex items-center justify-center min-h-[calc(100dvh-65px)] gap-2">
-      <RoomPage />
+      <RoomPage id={params.id} />
     </div>
   );
 }

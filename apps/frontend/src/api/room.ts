@@ -35,3 +35,21 @@ export const createRoom = async (payload: RoomCreatePayload) => {
 
   return res.json();
 };
+
+/**
+ * Get room by ID
+ * @param id
+ * @returns
+ */
+export const getRoomById = async (id: string) => {
+  const res = await fetch(`${API_URL}/room/detail/${id}`, {
+    method: "GET",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw errorData;
+  }
+
+  return res.json();
+};
