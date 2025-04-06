@@ -48,6 +48,12 @@ function MyRooms() {
               </div>
             </div>
           ))}
+
+          {data.data.length === 0 && (
+            <div className="flex items-center justify-center w-full h-full">
+              <h3 className="text-md">You don't have any rooms</h3>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
