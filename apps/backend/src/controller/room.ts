@@ -55,6 +55,7 @@ export const getMyRoom = async (req: Request, res: Response) => {
 
     const room = await Room.find({
       "players._id": userId,
+      "&&": { "players.owner": true },
     })
       .limit(limit)
       .skip(offset);
