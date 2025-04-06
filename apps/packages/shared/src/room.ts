@@ -20,3 +20,8 @@ export type RoomCreatePayload = {
   password: string;
   _id: string;
 };
+
+export type RoomJoinPayload = {
+  rid: string;
+  userid: string;
+};
