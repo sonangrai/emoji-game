@@ -164,3 +164,43 @@ export const joinRoom = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * Leave a room
+ * @param req
+ * @param res
+ */
+export const leaveRoom = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.params.id;
+    const id = req.body._id;
+    const leaveResponse = await Room.findByIdAndUpdate(
+      {
+        _id: roomId,
+        "players._id": id,
+      },
+      {
+        $set: {
+          "players.$.online": false,
+        },
+      },
+      { new: true }
+    );
+    if (leaveResponse) {
+      const respObject = new ResponseObj(
+        200,
+        leaveResponse,
+        "Room left successfully"
+      );
+      return res.status(200).send(respObject);
+    }
+    const respObject = new ResponseObj(404, {}, "Room not found");
+    return res.status(404).send(respObject);
+  } catch (error) {
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};

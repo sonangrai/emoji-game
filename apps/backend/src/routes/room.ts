@@ -5,6 +5,7 @@ import {
   getMyRoom,
   getRoomById,
   joinRoom,
+  leaveRoom,
 } from "../controller/room";
 
 const router = Router();
@@ -31,5 +32,12 @@ router.post("/join/:id", [
   check("_id").notEmpty().withMessage("User ID is required"),
   joinRoom,
 ]);
+
+// Leave room
+router.post(
+  "/leave/:id",
+  [check("_id").notEmpty().withMessage("User ID is required")],
+  leaveRoom
+);
 
 export default router;
