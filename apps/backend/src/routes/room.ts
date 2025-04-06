@@ -1,6 +1,11 @@
 import Router from "express";
 import { check } from "express-validator";
-import { createRoom, getMyRoom, getRoomById } from "../controller/room";
+import {
+  createRoom,
+  getMyRoom,
+  getRoomById,
+  joinRoom,
+} from "../controller/room";
 
 const router = Router();
 
@@ -20,5 +25,11 @@ router.get("/:id", getMyRoom);
 
 // Get room by ID
 router.get("/detail/:id", getRoomById);
+
+// Join a room
+router.post("/join/:id", [
+  check("_id").notEmpty().withMessage("User ID is required"),
+  joinRoom,
+]);
 
 export default router;

@@ -93,3 +93,73 @@ export const getRoomById = async (req: Request, res: Response) => {
     return res.status(404).send(respObject);
   } catch (error) {}
 };
+
+/**
+ * Join a room
+ * @param req
+ * @param res
+ * @returns
+ */
+export const joinRoom = async (req: Request, res: Response) => {
+  const roomId = req.params.id;
+  const id = req.body._id;
+
+  try {
+    const findUserExist = await Room.findOne({
+      _id: roomId,
+      $and: [{ "players._id": id }],
+    });
+
+    let joinResponse;
+
+    if (findUserExist) {
+      joinResponse = await Room.findByIdAndUpdate(
+        {
+          _id: roomId,
+          "players._id": { $ne: id },
+        },
+        {
+          $set: {
+            "players.$.online": true,
+          },
+        },
+        { new: true }
+      );
+    } else {
+      joinResponse = await Room.findByIdAndUpdate(
+        {
+          _id: roomId,
+          "players._id": { $ne: id },
+        },
+        {
+          $push: {
+            players: {
+              _id: id,
+              owner: false,
+              score: 0,
+              online: true,
+            },
+          },
+        },
+        { new: true }
+      );
+    }
+
+    if (joinResponse) {
+      const respObject = new ResponseObj(
+        200,
+        joinResponse,
+        "Room joined successfully"
+      );
+      return res.status(200).send(respObject);
+    }
+    const respObject = new ResponseObj(404, {}, "Room not found");
+    return res.status(404).send(respObject);
+  } catch (error) {
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
