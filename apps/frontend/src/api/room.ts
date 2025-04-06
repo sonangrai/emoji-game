@@ -1,4 +1,7 @@
-import { RoomCreatePayload } from "../../../packages/shared/src";
+import {
+  RoomCreatePayload,
+  RoomJoinPayload,
+} from "../../../packages/shared/src";
 import { API_URL } from "./config";
 
 /**
@@ -44,6 +47,30 @@ export const createRoom = async (payload: RoomCreatePayload) => {
 export const getRoomById = async (id: string) => {
   const res = await fetch(`${API_URL}/room/detail/${id}`, {
     method: "GET",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw errorData;
+  }
+
+  return res.json();
+};
+
+/**
+ *
+ * @param rid
+ * @param userid
+ * @returns
+ */
+export const joinRoom = async (payload: RoomJoinPayload) => {
+  const { rid, userid } = payload;
+  const res = await fetch(`${API_URL}/room/join/${rid}`, {
+    method: "POST",
+    body: JSON.stringify({ _id: userid }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   if (!res.ok) {
