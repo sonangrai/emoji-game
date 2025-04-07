@@ -9,11 +9,6 @@ export function useWebSocket() {
 
     socketRef.current.onopen = () => {
       console.log("Connected to backend WebSocket");
-      socketRef.current?.send("Hello from frontend!");
-    };
-
-    socketRef.current.onmessage = (event) => {
-      console.log("Message from server:", event.data);
     };
 
     return () => {
@@ -21,9 +16,5 @@ export function useWebSocket() {
     };
   }, []);
 
-  const sendMessage = (msg: string) => {
-    socketRef.current?.send(msg);
-  };
-
-  return { sendMessage };
+  return { socketRef };
 }
