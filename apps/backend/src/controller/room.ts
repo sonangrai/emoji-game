@@ -51,11 +51,14 @@ export const getMyRoom = async (req: Request, res: Response) => {
   const limit = Number(req.query.limit) || 10;
 
   try {
-    const roomItemsLength = await Room.countDocuments();
+    const roomItemsLength = await Room.countDocuments({
+      "players._id": userId,
+      "players.owner": true,
+    });
 
     const room = await Room.find({
       "players._id": userId,
-      "&&": { "players.owner": true },
+      "players.owner": true,
     })
       .limit(limit)
       .skip(offset);
@@ -68,7 +71,10 @@ export const getMyRoom = async (req: Request, res: Response) => {
 
     let respObject = new ResponseObj(404, {}, "Room not found");
     return res.status(404).send(respObject);
-  } catch (error) {}
+  } catch (error) {
+    let respObject = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(respObject);
+  }
 };
 
 /**
