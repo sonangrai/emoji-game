@@ -80,3 +80,27 @@ export const joinRoom = async (payload: RoomJoinPayload) => {
 
   return res.json();
 };
+
+/**
+ * Leave room
+ * @param rid
+ * @param userid
+ * @returns
+ */
+export const leaveRoom = async (payload: RoomJoinPayload) => {
+  const { rid, userid } = payload;
+  const res = await fetch(`${API_URL}/room/leave/${rid}`, {
+    method: "POST",
+    body: JSON.stringify({ _id: userid }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw errorData;
+  }
+
+  return res.json();
+};

@@ -1,11 +1,15 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { LogOut, Send } from "lucide-react";
 import ChatBubble from "../common/chat-bubble";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import React, { useEffect, useRef, useState } from "react";
 import { Room } from "../../../../packages/shared/src";
+import { useMutation } from "@tanstack/react-query";
+import { leaveRoom } from "@/api/room";
+import { toast } from "sonner";
+import { getCookie } from "@/lib/cookie";
 
 type ChatBoxType = {
   room: Room;
@@ -13,6 +17,8 @@ type ChatBoxType = {
 
 function ChatBox({ room }: ChatBoxType) {
   const msgRef = useRef<HTMLDivElement>(null);
+  const player = getCookie("player");
+  const playerId = player ? JSON.parse(player)._id : "";
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState([
     {
@@ -36,6 +42,11 @@ function ChatBox({ room }: ChatBoxType) {
       },
     },
   ]);
+
+  const leaveRoomMutation = useMutation({
+    mutationKey: ["leaveRoom"],
+    mutationFn: leaveRoom,
+  });
 
   useEffect(() => {
     if (input === "" && msgRef.current) {
@@ -65,6 +76,22 @@ function ChatBox({ room }: ChatBoxType) {
     setInput("");
   }
 
+  const leaveRoomHandle = () => {
+    if (confirm("Are you sure you want to leave the room?")) {
+      leaveRoomMutation.mutate(
+        { rid: room._id, userid: playerId },
+        {
+          onSuccess: () => {
+            toast.success("Left room successfully");
+          },
+          onError: (error) => {
+            toast.error("Error leaving room");
+          },
+        }
+      );
+    }
+  };
+
   return (
     <div className="rounded-sm border p-2 w-md h-[80dvh]">
       <div className="sticky top-0 h-[30px] flex justify-between items-center pb-[10px]">
@@ -73,6 +100,9 @@ function ChatBox({ room }: ChatBoxType) {
           <small>({room.players.filter((el) => el.online).length})</small>
         </strong>
         <span className="text-xs">1 / 10</span>
+        <Button variant="ghost" className="p-0" onClick={leaveRoomHandle}>
+          <LogOut />
+        </Button>
       </div>
       <div
         className="max-h-full overflow-y-auto h-[calc(100%-80px)] no-scrollbar"

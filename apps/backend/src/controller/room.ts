@@ -180,7 +180,8 @@ export const leaveRoom = async (req: Request, res: Response) => {
   try {
     const roomId = req.params.id;
     const id = req.body._id;
-    const leaveResponse = await Room.findByIdAndUpdate(
+
+    const leaveResponse = await Room.findOneAndUpdate(
       {
         _id: roomId,
         "players._id": id,
