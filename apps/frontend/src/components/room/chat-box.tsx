@@ -10,12 +10,15 @@ import { useMutation } from "@tanstack/react-query";
 import { leaveRoom } from "@/api/room";
 import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
+import { useWebSocket } from "@/hooks/useSocket";
 
 type ChatBoxType = {
   room: Room;
 };
 
 function ChatBox({ room }: ChatBoxType) {
+  const { socketRef } = useWebSocket();
+  const [roomLeaver, setRoomLeaver] = useState<[]>([]);
   const msgRef = useRef<HTMLDivElement>(null);
   const player = getCookie("player");
   const playerId = player ? JSON.parse(player)._id : "";
@@ -75,6 +78,22 @@ function ChatBox({ room }: ChatBoxType) {
     ]);
     setInput("");
   }
+
+  useEffect(() => {
+    socketRef.current?.addEventListener("message", (event: MessageEvent) => {
+      const response = JSON.parse(event.data);
+      messages.push({
+        id: messages.length + 1,
+        message: response.payload,
+        time: new Date().toLocaleTimeString(),
+        isSender: false,
+        user: {
+          name: "SYSTEM",
+          image: "https://randomuser.me/api/portraits",
+        },
+      });
+    });
+  }, []);
 
   const leaveRoomHandle = () => {
     if (confirm("Are you sure you want to leave the room?")) {
