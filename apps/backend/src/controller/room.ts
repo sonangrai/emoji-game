@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import Room from "../model/Room";
 import ResponseObj from "./response";
+import { sendTypedEvent } from "../ws";
+import { LEAVE_ROOM } from "../events/room";
 
 /**
  * Create a new room
@@ -199,6 +201,11 @@ export const leaveRoom = async (req: Request, res: Response) => {
         leaveResponse,
         "Room left successfully"
       );
+
+      sendTypedEvent(LEAVE_ROOM, {
+        userId: id,
+      });
+
       return res.status(200).send(respObject);
     }
     const respObject = new ResponseObj(404, {}, "Room not found");
