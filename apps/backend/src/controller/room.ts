@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import Room from "../model/Room";
 import ResponseObj from "./response";
 import { sendTypedEvent } from "../ws";
-import { LEAVE_ROOM } from "../events/room";
+import { JOIN_ROOM, LEAVE_ROOM } from "../events/room";
 
 /**
  * Create a new room
@@ -122,10 +122,10 @@ export const joinRoom = async (req: Request, res: Response) => {
     let joinResponse;
 
     if (findUserExist) {
-      joinResponse = await Room.findByIdAndUpdate(
+      joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players._id": { $ne: id },
+          "players._id": id,
         },
         {
           $set: {
@@ -135,10 +135,10 @@ export const joinRoom = async (req: Request, res: Response) => {
         { new: true }
       );
     } else {
-      joinResponse = await Room.findByIdAndUpdate(
+      joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players._id": { $ne: id },
+          "players._id": id,
         },
         {
           $push: {
@@ -160,6 +160,11 @@ export const joinRoom = async (req: Request, res: Response) => {
         joinResponse,
         "Room joined successfully"
       );
+
+      sendTypedEvent(JOIN_ROOM, {
+        userId: id,
+      });
+
       return res.status(200).send(respObject);
     }
     const respObject = new ResponseObj(404, {}, "Room not found");
