@@ -11,14 +11,15 @@ import { leaveRoom } from "@/api/room";
 import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
 import { useWebSocket } from "@/hooks/useSocket";
+import { useRouter } from "next/navigation";
 
 type ChatBoxType = {
   room: Room;
 };
 
 function ChatBox({ room }: ChatBoxType) {
+  const router = useRouter();
   const { socketRef } = useWebSocket();
-  const [roomLeaver, setRoomLeaver] = useState<[]>([]);
   const msgRef = useRef<HTMLDivElement>(null);
   const player = getCookie("player");
   const playerId = player ? JSON.parse(player)._id : "";
@@ -29,6 +30,7 @@ function ChatBox({ room }: ChatBoxType) {
       message: "Do you liked the game?",
       time: "12:00",
       isSender: false,
+      system: false,
       user: {
         name: "John Doe",
         image: "https://randomuser.me/api/portraits",
@@ -39,6 +41,7 @@ function ChatBox({ room }: ChatBoxType) {
       message: "Hey, I am loving this game so much 😄",
       time: "12:08",
       isSender: true,
+      system: false,
       user: {
         name: "Sonang Sencho",
         image: "https://randomuser.me/api/portraits",
@@ -70,6 +73,7 @@ function ChatBox({ room }: ChatBoxType) {
         message: input,
         time: new Date().toLocaleTimeString(),
         isSender: true,
+        system: false,
         user: {
           name: "Sonang Sencho",
           image: "https://randomuser.me/api/portraits",
@@ -82,18 +86,42 @@ function ChatBox({ room }: ChatBoxType) {
   useEffect(() => {
     socketRef.current?.addEventListener("message", (event: MessageEvent) => {
       const response = JSON.parse(event.data);
-      messages.push({
-        id: messages.length + 1,
-        message: response.payload,
-        time: new Date().toLocaleTimeString(),
-        isSender: false,
-        user: {
-          name: "SYSTEM",
-          image: "https://randomuser.me/api/portraits",
-        },
-      });
+      console.log("response", response);
+      switch (response.type) {
+        case "ROOM:LEAVE":
+          messages.push({
+            id: messages.length + 1,
+            message: "Room left",
+            time: new Date().toLocaleTimeString(),
+            isSender: false,
+            system: true,
+            user: {
+              name: "$",
+              image: "https://randomuser.me/api/portraits",
+            },
+          });
+
+          break;
+
+        case "ROOM:JOIN":
+          messages.push({
+            id: messages.length + 1,
+            message: "Room Join",
+            time: new Date().toLocaleTimeString(),
+            isSender: false,
+            system: true,
+            user: {
+              name: "$",
+              image: "https://randomuser.me/api/portraits",
+            },
+          });
+          break;
+
+        default:
+          break;
+      }
     });
-  }, []);
+  }, [socketRef]);
 
   const leaveRoomHandle = () => {
     if (confirm("Are you sure you want to leave the room?")) {
@@ -102,6 +130,7 @@ function ChatBox({ room }: ChatBoxType) {
         {
           onSuccess: () => {
             toast.success("Left room successfully");
+            router.push("/play");
           },
           onError: (error) => {
             toast.error("Error leaving room");
