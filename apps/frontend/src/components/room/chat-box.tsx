@@ -1,18 +1,28 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { LogOut, Send } from "lucide-react";
 import ChatBubble from "../common/chat-bubble";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import React, { useEffect, useRef, useState } from "react";
 import { Room } from "../../../../packages/shared/src";
+import { useMutation } from "@tanstack/react-query";
+import { leaveRoom } from "@/api/room";
+import { toast } from "sonner";
+import { getCookie } from "@/lib/cookie";
+import { useWebSocket } from "@/hooks/useSocket";
+import { useRouter } from "next/navigation";
 
 type ChatBoxType = {
   room: Room;
 };
 
 function ChatBox({ room }: ChatBoxType) {
+  const router = useRouter();
+  const { socketRef } = useWebSocket();
   const msgRef = useRef<HTMLDivElement>(null);
+  const player = getCookie("player");
+  const playerId = player ? JSON.parse(player)._id : "";
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState([
     {
@@ -20,6 +30,7 @@ function ChatBox({ room }: ChatBoxType) {
       message: "Do you liked the game?",
       time: "12:00",
       isSender: false,
+      system: false,
       user: {
         name: "John Doe",
         image: "https://randomuser.me/api/portraits",
@@ -30,12 +41,18 @@ function ChatBox({ room }: ChatBoxType) {
       message: "Hey, I am loving this game so much 😄",
       time: "12:08",
       isSender: true,
+      system: false,
       user: {
         name: "Sonang Sencho",
         image: "https://randomuser.me/api/portraits",
       },
     },
   ]);
+
+  const leaveRoomMutation = useMutation({
+    mutationKey: ["leaveRoom"],
+    mutationFn: leaveRoom,
+  });
 
   useEffect(() => {
     if (input === "" && msgRef.current) {
@@ -56,6 +73,7 @@ function ChatBox({ room }: ChatBoxType) {
         message: input,
         time: new Date().toLocaleTimeString(),
         isSender: true,
+        system: false,
         user: {
           name: "Sonang Sencho",
           image: "https://randomuser.me/api/portraits",
@@ -65,6 +83,63 @@ function ChatBox({ room }: ChatBoxType) {
     setInput("");
   }
 
+  useEffect(() => {
+    socketRef.current?.addEventListener("message", (event: MessageEvent) => {
+      const response = JSON.parse(event.data);
+      console.log("response", response);
+      switch (response.type) {
+        case "ROOM:LEAVE":
+          messages.push({
+            id: messages.length + 1,
+            message: "Room left",
+            time: new Date().toLocaleTimeString(),
+            isSender: false,
+            system: true,
+            user: {
+              name: "$",
+              image: "https://randomuser.me/api/portraits",
+            },
+          });
+
+          break;
+
+        case "ROOM:JOIN":
+          messages.push({
+            id: messages.length + 1,
+            message: "Room Join",
+            time: new Date().toLocaleTimeString(),
+            isSender: false,
+            system: true,
+            user: {
+              name: "$",
+              image: "https://randomuser.me/api/portraits",
+            },
+          });
+          break;
+
+        default:
+          break;
+      }
+    });
+  }, [socketRef]);
+
+  const leaveRoomHandle = () => {
+    if (confirm("Are you sure you want to leave the room?")) {
+      leaveRoomMutation.mutate(
+        { rid: room._id, userid: playerId },
+        {
+          onSuccess: () => {
+            toast.success("Left room successfully");
+            router.push("/play");
+          },
+          onError: (error) => {
+            toast.error("Error leaving room");
+          },
+        }
+      );
+    }
+  };
+
   return (
     <div className="rounded-sm border p-2 w-md h-[80dvh]">
       <div className="sticky top-0 h-[30px] flex justify-between items-center pb-[10px]">
@@ -73,6 +148,9 @@ function ChatBox({ room }: ChatBoxType) {
           <small>({room.players.filter((el) => el.online).length})</small>
         </strong>
         <span className="text-xs">1 / 10</span>
+        <Button variant="ghost" className="p-0" onClick={leaveRoomHandle}>
+          <LogOut />
+        </Button>
       </div>
       <div
         className="max-h-full overflow-y-auto h-[calc(100%-80px)] no-scrollbar"

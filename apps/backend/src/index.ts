@@ -1,12 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import WebSocket from "ws";
 
 dotenv.config({ path: "../../.env" });
 import routes from "./routes";
 import connectDb from "./db/dbConnect";
 import next from "next";
 import path from "path";
+import http from "http";
+import { setupWebSocket } from "./ws";
 
 const PORT = process.env.PORT;
 
@@ -16,8 +19,11 @@ const nextApp = next({ dev, dir: path.join(__dirname, "../../frontend") });
 const handle = nextApp.getRequestHandler();
 
 const app = express();
+const httpServer = http.createServer(app);
 
 app.use(cors());
+
+setupWebSocket(httpServer);
 
 //Validating json usage
 app.use(express.json());
@@ -35,13 +41,13 @@ if (!dev) {
       return handle(req, res);
     });
 
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log("Server Up in PORT:", PORT);
     });
   });
 }
 
 if (dev)
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log("Server <Dev> Up in PORT:", PORT);
   });

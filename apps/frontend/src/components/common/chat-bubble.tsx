@@ -5,6 +5,7 @@ type ChatBubbleProps = {
   message: string;
   time: string;
   isSender: boolean;
+  system?: boolean;
   user: {
     name: string;
     image: string;
@@ -20,7 +21,10 @@ function ChatBubble(props: ChatBubbleProps) {
       )}
     >
       {!props.isSender && (
-        <Avatar>
+        <Avatar
+          className={props.system ? "border-blue-400 border" : ""}
+          title={props.user.name}
+        >
           <AvatarImage src={props.user.image} />
           <AvatarFallback>{props.user.name[0]}</AvatarFallback>
         </Avatar>
@@ -28,7 +32,8 @@ function ChatBubble(props: ChatBubbleProps) {
       <div
         className={cn(
           "inline-block py-2 px-4 rounded-lg",
-          props.isSender ? "bg-black text-white" : "bg-gray-200 text-black"
+          props.isSender ? "bg-black text-white" : "bg-gray-200 text-black",
+          props.system && "bg-blue-500 text-white"
         )}
       >
         {props.message}

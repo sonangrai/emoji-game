@@ -1,21 +1,43 @@
 "use client";
-import { getMyRooms } from "@/api/room";
+import { getMyRooms, joinRoom } from "@/api/room";
 import { getCookie } from "@/lib/cookie";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Room } from "../../../../packages/shared/src";
-import { Button, buttonVariants } from "../ui/button";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function MyRooms() {
+  const router = useRouter();
   const player = getCookie("player");
+  const joinRoomMutation = useMutation({
+    mutationKey: ["joinRoom"],
+    mutationFn: joinRoom,
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-rooms"],
     queryFn: () => getMyRooms(JSON.parse(player)._id),
     enabled: !!player,
   });
+
+  const handleJoinRoom = (id: string) => {
+    joinRoomMutation.mutate(
+      {
+        rid: id,
+        userid: JSON.parse(player)._id,
+      },
+      {
+        onSuccess: () => {
+          router.push(`/room/${id}`);
+        },
+        onError: () => {
+          toast.error("Error joining room");
+        },
+      }
+    );
+  };
 
   if (isLoading) return <>Loading</>;
 
@@ -35,16 +57,13 @@ function MyRooms() {
                 <p className="text-xs">({room.players.length}) p</p>
               </div>
               <div>
-                <Link
-                  href={`/room/${room._id}`}
-                  className={cn(
-                    buttonVariants({
-                      variant: "outline",
-                    })
-                  )}
+                <Button
+                  variant="outline"
+                  onClick={() => handleJoinRoom(room._id)}
+                  disabled={joinRoomMutation.isPending}
                 >
-                  Join
-                </Link>
+                  {joinRoomMutation.isPending ? "Joining" : "Join"}
+                </Button>
               </div>
             </div>
           ))}

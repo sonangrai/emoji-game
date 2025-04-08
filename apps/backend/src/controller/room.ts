@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import Room from "../model/Room";
 import ResponseObj from "./response";
+import { sendTypedEvent } from "../ws";
+import { JOIN_ROOM, LEAVE_ROOM } from "../events/room";
 
 /**
  * Create a new room
@@ -51,11 +53,14 @@ export const getMyRoom = async (req: Request, res: Response) => {
   const limit = Number(req.query.limit) || 10;
 
   try {
-    const roomItemsLength = await Room.countDocuments();
+    const roomItemsLength = await Room.countDocuments({
+      "players._id": userId,
+      "players.owner": true,
+    });
 
     const room = await Room.find({
       "players._id": userId,
-      "&&": { "players.owner": true },
+      "players.owner": true,
     })
       .limit(limit)
       .skip(offset);
@@ -68,7 +73,10 @@ export const getMyRoom = async (req: Request, res: Response) => {
 
     let respObject = new ResponseObj(404, {}, "Room not found");
     return res.status(404).send(respObject);
-  } catch (error) {}
+  } catch (error) {
+    let respObject = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(respObject);
+  }
 };
 
 /**
@@ -114,10 +122,10 @@ export const joinRoom = async (req: Request, res: Response) => {
     let joinResponse;
 
     if (findUserExist) {
-      joinResponse = await Room.findByIdAndUpdate(
+      joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players._id": { $ne: id },
+          "players._id": id,
         },
         {
           $set: {
@@ -127,10 +135,10 @@ export const joinRoom = async (req: Request, res: Response) => {
         { new: true }
       );
     } else {
-      joinResponse = await Room.findByIdAndUpdate(
+      joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players._id": { $ne: id },
+          "players._id": id,
         },
         {
           $push: {
@@ -152,6 +160,57 @@ export const joinRoom = async (req: Request, res: Response) => {
         joinResponse,
         "Room joined successfully"
       );
+
+      sendTypedEvent(JOIN_ROOM, {
+        userId: id,
+      });
+
+      return res.status(200).send(respObject);
+    }
+    const respObject = new ResponseObj(404, {}, "Room not found");
+    return res.status(404).send(respObject);
+  } catch (error) {
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+/**
+ * Leave a room
+ * @param req
+ * @param res
+ */
+export const leaveRoom = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.params.id;
+    const id = req.body._id;
+
+    const leaveResponse = await Room.findOneAndUpdate(
+      {
+        _id: roomId,
+        "players._id": id,
+      },
+      {
+        $set: {
+          "players.$.online": false,
+        },
+      },
+      { new: true }
+    );
+    if (leaveResponse) {
+      const respObject = new ResponseObj(
+        200,
+        leaveResponse,
+        "Room left successfully"
+      );
+
+      sendTypedEvent(LEAVE_ROOM, {
+        userId: id,
+      });
+
       return res.status(200).send(respObject);
     }
     const respObject = new ResponseObj(404, {}, "Room not found");
