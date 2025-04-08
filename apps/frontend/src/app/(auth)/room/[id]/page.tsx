@@ -6,10 +6,11 @@ export const metadata: Metadata = {
   description: "Let GEmoji",
 };
 
-function page({ params }: { params: { id: string } }) {
+async function page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <div className="flex items-center justify-center min-h-[calc(100dvh-65px)] gap-2">
-      <RoomPage id={params.id} />
+      <RoomPage id={id} />
     </div>
   );
 }
