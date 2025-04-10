@@ -21,6 +21,9 @@ const handle = nextApp.getRequestHandler();
 const app = express();
 const httpServer = http.createServer(app);
 
+httpServer.keepAliveTimeout = 61 * 1000;
+httpServer.headersTimeout = 65 * 1000;
+
 app.use(cors());
 
 setupWebSocket(httpServer);
