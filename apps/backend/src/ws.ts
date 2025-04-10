@@ -16,10 +16,12 @@ export function setupWebSocket(server: HTTPServer): void {
 
     ws.on("message", (message: string) => {
       console.log("Received:", message);
+
+      return false;
     });
 
-    ws.on("close", () => {
-      console.log("WebSocket client disconnected");
+    ws.on("close", (code, reason) => {
+      console.log("WebSocket client disconnected", code, reason.toString());
     });
   });
 }
