@@ -20,7 +20,21 @@ export function setupWebSocket(server: HTTPServer): void {
       return false;
     });
 
+    // Start keep-alive ping interval
+    const interval = setInterval(() => {
+      wss?.clients.forEach((ws) => {
+        if (!(ws as any).isAlive) {
+          console.log("Terminating dead WebSocket");
+          return ws.terminate();
+        }
+
+        (ws as any).isAlive = false;
+        ws.ping(); // client will respond with pong
+      });
+    }, 30000); // Ping every 30s
+
     ws.on("close", (code, reason) => {
+      clearInterval(interval); // Clear the interval on close
       console.log("WebSocket client disconnected", code, reason.toString());
     });
   });
