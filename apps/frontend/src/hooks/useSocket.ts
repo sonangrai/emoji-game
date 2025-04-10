@@ -11,7 +11,7 @@ export function useWebSocket() {
       console.log("Connected to backend WebSocket");
     };
 
-    socketRef.current.close = (event) => {
+    socketRef.current.onclose = (event) => {
       console.log("WebSocket closed", event);
     };
 
