@@ -62,7 +62,7 @@ function MyRooms() {
                   onClick={() => handleJoinRoom(room._id)}
                   disabled={joinRoomMutation.isPending}
                 >
-                  {joinRoomMutation.isPending ? "Joining" : "Join"}
+                  Join
                 </Button>
               </div>
             </div>
