@@ -216,7 +216,7 @@ export const leaveRoom = async (req: Request, res: Response) => {
 
       getIO().emit(LEAVE_ROOM, {
         userId: id,
-        nickName: userData?.nickname,
+        nickname: userData?.nickname,
       });
 
       return res.status(200).send(respObject);
