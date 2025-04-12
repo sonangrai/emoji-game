@@ -13,7 +13,6 @@ function useRoom() {
 
   useEffect(() => {
     socket.on("ROOM:JOIN", (data) => {
-      console.log("data", data);
       setRoomEve(
         produce((draft) => {
           const newRoomEve = draft as RoomEvent[];
