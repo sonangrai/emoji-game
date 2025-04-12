@@ -11,8 +11,6 @@ import { leaveRoom } from "@/api/room";
 import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
 import { useRouter } from "next/navigation";
-import { BASE_URL } from "@/api/config";
-import { io } from "socket.io-client";
 import useRoom from "@/hooks/useRoom";
 
 type ChatBoxType = {
@@ -85,17 +83,12 @@ function ChatBox({ room }: ChatBoxType) {
     setInput("");
   }
 
-  useEffect(() => {
-    console.log(roomEve);
-  }, [roomEve]);
-
   const leaveRoomHandle = () => {
     if (confirm("Are you sure you want to leave the room?")) {
       leaveRoomMutation.mutate(
         { rid: room._id, userid: playerId },
         {
           onSuccess: () => {
-            toast.success("Left room successfully");
             router.push("/play");
           },
           onError: (error) => {

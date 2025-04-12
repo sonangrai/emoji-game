@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ChatBox from "./chat-box";
 import { getRoomById } from "@/api/room";
+import RoomEvent from "./room-event";
 
 function RoomPage({ id }: { id: string }) {
   const { data: roomData, isLoading } = useQuery({
@@ -19,6 +20,8 @@ function RoomPage({ id }: { id: string }) {
           <ChatBox room={roomData.data} />
         </div>
       </div>
+
+      <RoomEvent />
     </div>
   );
 }
