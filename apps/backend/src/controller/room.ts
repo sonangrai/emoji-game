@@ -4,6 +4,7 @@ import Room from "../model/Room";
 import ResponseObj from "./response";
 import { JOIN_ROOM, LEAVE_ROOM } from "../events/room";
 import { getIO } from "../socket";
+import User from "../model/User";
 
 /**
  * Create a new room
@@ -118,6 +119,7 @@ export const getRoomById = async (req: Request, res: Response) => {
 export const joinRoom = async (req: Request, res: Response) => {
   const roomId = req.params.id;
   const id = req.body._id;
+  const userData = await User.findById(id);
 
   try {
     const findUserExist = await Room.findOne({
@@ -167,7 +169,7 @@ export const joinRoom = async (req: Request, res: Response) => {
         "Room joined successfully"
       );
 
-      getIO().emit(JOIN_ROOM, { userId: id });
+      getIO().emit(JOIN_ROOM, { userId: id, nickname: userData?.nickname });
 
       return res.status(200).send(respObject);
     }
