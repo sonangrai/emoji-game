@@ -4,6 +4,4 @@ export const API_URL =
   process.env.NODE_ENV !== "production" ? `${BASE_URL}/api` : "/api";
 
 export const SOCKET_URL =
-  process.env.NODE_ENV !== "production"
-    ? `${BASE_URL.replace("http", "ws")}`
-    : "/";
+  process.env.NODE_ENV !== "production" ? BASE_URL : "/";

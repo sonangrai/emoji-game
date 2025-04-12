@@ -10,16 +10,18 @@ import { useMutation } from "@tanstack/react-query";
 import { leaveRoom } from "@/api/room";
 import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
-import { useWebSocket } from "@/hooks/useSocket";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/api/config";
+import { io } from "socket.io-client";
+import useRoom from "@/hooks/useRoom";
 
 type ChatBoxType = {
   room: Room;
 };
 
 function ChatBox({ room }: ChatBoxType) {
+  const { roomEve } = useRoom();
   const router = useRouter();
-  const { socketRef } = useWebSocket();
   const msgRef = useRef<HTMLDivElement>(null);
   const player = getCookie("player");
   const playerId = player ? JSON.parse(player)._id : "";
@@ -84,44 +86,8 @@ function ChatBox({ room }: ChatBoxType) {
   }
 
   useEffect(() => {
-    socketRef.current?.addEventListener("message", (event: MessageEvent) => {
-      const response = JSON.parse(event.data);
-      console.log("response", response);
-      switch (response.type) {
-        case "ROOM:LEAVE":
-          messages.push({
-            id: messages.length + 1,
-            message: "Room left",
-            time: new Date().toLocaleTimeString(),
-            isSender: false,
-            system: true,
-            user: {
-              name: "$",
-              image: "https://randomuser.me/api/portraits",
-            },
-          });
-
-          break;
-
-        case "ROOM:JOIN":
-          messages.push({
-            id: messages.length + 1,
-            message: "Room Join",
-            time: new Date().toLocaleTimeString(),
-            isSender: false,
-            system: true,
-            user: {
-              name: "$",
-              image: "https://randomuser.me/api/portraits",
-            },
-          });
-          break;
-
-        default:
-          break;
-      }
-    });
-  }, [socketRef]);
+    console.log(roomEve);
+  }, [roomEve]);
 
   const leaveRoomHandle = () => {
     if (confirm("Are you sure you want to leave the room?")) {
