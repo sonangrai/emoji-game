@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import ChatBox from "./chat-box";
 import { getRoomById } from "@/api/room";
 import RoomEvent from "./room-event";
+import RoomPlayers from "./room-players";
 
 function RoomPage({ id }: { id: string }) {
   const { data: roomData, isLoading } = useQuery({
@@ -15,7 +16,9 @@ function RoomPage({ id }: { id: string }) {
   return (
     <div className="border rounded-lg p-2">
       <div className="flex gap-2">
-        <div className="w-lg">Emoji Here</div>
+        <div className="w-lg">
+          <RoomPlayers room={roomData.data} />
+        </div>
         <div>
           <ChatBox room={roomData.data} />
         </div>
