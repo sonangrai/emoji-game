@@ -6,7 +6,7 @@ let socket: Socket | null = null;
 
 export const getSocket = (): Socket => {
   if (!socket) {
-    socket = io("http://localhost:4000", {
+    socket = io(SOCKET_URL, {
       transports: ["websocket"], // optional: for performance
     });
   }
