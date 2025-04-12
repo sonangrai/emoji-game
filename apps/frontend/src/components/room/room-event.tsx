@@ -28,8 +28,8 @@ function RoomEvent() {
                 )}
               >
                 {event.type === "JOIN"
-                  ? `${event.playerId} joined the room`
-                  : `${event.playerId} left the room`}
+                  ? `${event.nickname} joined the room`
+                  : `${event.nickname} left the room`}
               </AlertTitle>
             </Alert>
           ))

@@ -2,7 +2,11 @@ export type Player = {
   online: Boolean;
   score: Number;
   owner: Boolean;
-  _id: string;
+  user: {
+    _id: string;
+    nickname: string;
+    email: string;
+  };
 };
 
 export type Room = {

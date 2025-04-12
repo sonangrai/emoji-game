@@ -4,6 +4,7 @@ import { produce } from "immer";
 
 export type RoomEvent = {
   playerId: string;
+  nickname: string;
   type: "JOIN" | "LEAVE";
 };
 
@@ -18,6 +19,7 @@ function useRoom() {
           const newRoomEve = draft as RoomEvent[];
           newRoomEve.push({
             playerId: data.userId,
+            nickname: data.nickname,
             type: "JOIN",
           });
           return newRoomEve;
@@ -31,6 +33,7 @@ function useRoom() {
           const newRoomEve = draft as RoomEvent[];
           newRoomEve.push({
             playerId: data.userId,
+            nickname: data.nickname,
             type: "LEAVE",
           });
         })
