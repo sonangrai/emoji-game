@@ -9,15 +9,16 @@ export type RoomEvent = {
 
 function useRoom() {
   const socket = useSocket();
-  const [roomEve, setRoomEve] = useState<RoomEvent | []>([]);
+  const [roomEve, setRoomEve] = useState<RoomEvent[] | []>([]);
 
   useEffect(() => {
-    socket.on("ROOM:JOIN", (data: RoomEvent) => {
+    socket.on("ROOM:JOIN", (data) => {
+      console.log("data", data);
       setRoomEve(
         produce((draft) => {
           const newRoomEve = draft as RoomEvent[];
           newRoomEve.push({
-            playerId: data.playerId,
+            playerId: data.userId,
             type: "JOIN",
           });
           return newRoomEve;
@@ -25,12 +26,12 @@ function useRoom() {
       );
     });
 
-    socket.on("ROOM:LEAVE", (data: RoomEvent) => {
+    socket.on("ROOM:LEAVE", (data) => {
       setRoomEve(
         produce((draft) => {
           const newRoomEve = draft as RoomEvent[];
           newRoomEve.push({
-            playerId: data.playerId,
+            playerId: data.userId,
             type: "LEAVE",
           });
         })
@@ -39,9 +40,23 @@ function useRoom() {
 
     return () => {
       socket.off("ROOM:JOIN");
-      //   socket.off("ROOM:LEAVE");
+      socket.off("ROOM:LEAVE");
     };
   }, [socket]);
+
+  useEffect(() => {
+    const cleanerInterval = setTimeout(() => {
+      setRoomEve(
+        produce((draft) => {
+          const newRoomEve = draft as RoomEvent[];
+          newRoomEve.pop();
+          return newRoomEve;
+        })
+      );
+    }, 4000);
+
+    return () => clearInterval(cleanerInterval);
+  }, [roomEve]);
 
   return {
     roomEve,
