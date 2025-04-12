@@ -5,7 +5,14 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import type * as React from "react";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

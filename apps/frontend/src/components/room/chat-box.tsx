@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
 import { useRouter } from "next/navigation";
 import useRoom from "@/hooks/useRoom";
+import { queryClient } from "@/app/providers";
 
 type ChatBoxType = {
   room: Room;
@@ -62,6 +63,12 @@ function ChatBox({ room }: ChatBoxType) {
       });
     }
   }, [messages, input]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ["room", room._id],
+    });
+  }, [roomEve]);
 
   function submitHandle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
