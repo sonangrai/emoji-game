@@ -1,5 +1,5 @@
 import { Room } from "../../../../packages/shared/src";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 type RoomPlayersType = {
   room: Room;
