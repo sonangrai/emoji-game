@@ -193,6 +193,7 @@ export const leaveRoom = async (req: Request, res: Response) => {
   try {
     const roomId = req.params.id;
     const id = req.body._id;
+    const userData = await User.findById(id);
 
     const leaveResponse = await Room.findOneAndUpdate(
       {
@@ -215,6 +216,7 @@ export const leaveRoom = async (req: Request, res: Response) => {
 
       getIO().emit(LEAVE_ROOM, {
         userId: id,
+        nickName: userData?.nickname,
       });
 
       return res.status(200).send(respObject);
