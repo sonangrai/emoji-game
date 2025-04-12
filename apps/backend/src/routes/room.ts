@@ -8,6 +8,7 @@ import {
   leaveRoom,
 } from "../controller/room";
 import { getChats } from "../controller/chat";
+import validationCheck from "../utils/validation";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.post(
     check("name").notEmpty().withMessage("This is a required field"),
     check("password").notEmpty().withMessage("Password is required"),
   ],
+  validationCheck,
   createRoom
 );
 
@@ -31,6 +33,7 @@ router.get("/detail/:id", getRoomById);
 // Join a room
 router.post("/join/:id", [
   check("_id").notEmpty().withMessage("User ID is required"),
+  validationCheck,
   joinRoom,
 ]);
 
@@ -38,6 +41,7 @@ router.post("/join/:id", [
 router.post(
   "/leave/:id",
   [check("_id").notEmpty().withMessage("User ID is required")],
+  validationCheck,
   leaveRoom
 );
 

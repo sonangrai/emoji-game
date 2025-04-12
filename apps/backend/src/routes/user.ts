@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { check } from "express-validator";
 import { createUser, getUser, loginUser } from "../controller/user";
+import validationCheck from "../utils/validation";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.post(
     check("email").notEmpty().withMessage("Email is Required"),
     check("pin").notEmpty().withMessage("PIN is Required"),
   ],
+  validationCheck,
   createUser
 );
 
@@ -25,6 +27,7 @@ router.post(
     check("authType").notEmpty().withMessage("Email/Nickname is Required"),
     check("pin").notEmpty().withMessage("PIN is required"),
   ],
+  validationCheck,
   loginUser
 );
 
