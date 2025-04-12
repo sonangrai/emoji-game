@@ -7,6 +7,7 @@ import {
   joinRoom,
   leaveRoom,
 } from "../controller/room";
+import { getChats } from "../controller/chat";
 
 const router = Router();
 
@@ -39,5 +40,8 @@ router.post(
   [check("_id").notEmpty().withMessage("User ID is required")],
   leaveRoom
 );
+
+// Get chats
+router.get("/chats/:roomId", getChats);
 
 export default router;
