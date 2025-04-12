@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import WebSocket from "ws";
+import { Server } from "socket.io";
 
 dotenv.config({ path: "../../.env" });
 import routes from "./routes";
@@ -9,7 +9,7 @@ import connectDb from "./db/dbConnect";
 import next from "next";
 import path from "path";
 import http from "http";
-import { setupWebSocket } from "./ws";
+import { initSocket } from "./socket";
 
 const PORT = process.env.PORT;
 
@@ -23,7 +23,7 @@ const httpServer = http.createServer(app);
 
 app.use(cors());
 
-setupWebSocket(httpServer);
+initSocket(httpServer);
 
 //Validating json usage
 app.use(express.json());

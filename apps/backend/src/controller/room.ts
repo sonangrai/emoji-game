@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import Room from "../model/Room";
 import ResponseObj from "./response";
-import { sendTypedEvent } from "../ws";
 import { JOIN_ROOM, LEAVE_ROOM } from "../events/room";
+import { getIO } from "../socket";
 
 /**
  * Create a new room
@@ -161,9 +161,7 @@ export const joinRoom = async (req: Request, res: Response) => {
         "Room joined successfully"
       );
 
-      sendTypedEvent(JOIN_ROOM, {
-        userId: id,
-      });
+      getIO().emit(JOIN_ROOM, { userId: id });
 
       return res.status(200).send(respObject);
     }
@@ -207,7 +205,7 @@ export const leaveRoom = async (req: Request, res: Response) => {
         "Room left successfully"
       );
 
-      sendTypedEvent(LEAVE_ROOM, {
+      getIO().emit(LEAVE_ROOM, {
         userId: id,
       });
 
