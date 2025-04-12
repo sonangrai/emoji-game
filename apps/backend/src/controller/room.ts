@@ -21,7 +21,7 @@ export const createRoom = async (req: Request, res: Response) => {
     password: req.body.password,
     players: [
       {
-        _id: req.body._id,
+        user: req.body._id,
         owner: true,
         score: 0,
         online: true,
@@ -54,12 +54,12 @@ export const getMyRoom = async (req: Request, res: Response) => {
 
   try {
     const roomItemsLength = await Room.countDocuments({
-      "players._id": userId,
+      "players.user": userId,
       "players.owner": true,
     });
 
     const room = await Room.find({
-      "players._id": userId,
+      "players.user": userId,
       "players.owner": true,
     })
       .limit(limit)
@@ -88,7 +88,10 @@ export const getMyRoom = async (req: Request, res: Response) => {
 export const getRoomById = async (req: Request, res: Response) => {
   const roomId = req.params.id;
   try {
-    const roomInfo = await Room.findById(roomId);
+    const roomInfo = await Room.findById(roomId).populate("players.user", {
+      "-pin": true,
+    });
+
     if (roomInfo) {
       const respObject = new ResponseObj(
         200,
@@ -100,7 +103,10 @@ export const getRoomById = async (req: Request, res: Response) => {
 
     const respObject = new ResponseObj(404, {}, "Room not found");
     return res.status(404).send(respObject);
-  } catch (error) {}
+  } catch (error) {
+    const respObject = new ResponseObj(500, {}, "Internal Server Error");
+    return res.status(500).send(respObject);
+  }
 };
 
 /**
@@ -116,7 +122,7 @@ export const joinRoom = async (req: Request, res: Response) => {
   try {
     const findUserExist = await Room.findOne({
       _id: roomId,
-      $and: [{ "players._id": id }],
+      $and: [{ "players.user": id }],
     });
 
     let joinResponse;
@@ -125,7 +131,7 @@ export const joinRoom = async (req: Request, res: Response) => {
       joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players._id": id,
+          "players.user": id,
         },
         {
           $set: {
@@ -138,7 +144,7 @@ export const joinRoom = async (req: Request, res: Response) => {
       joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players._id": id,
+          "players.user": id,
         },
         {
           $push: {
@@ -189,7 +195,7 @@ export const leaveRoom = async (req: Request, res: Response) => {
     const leaveResponse = await Room.findOneAndUpdate(
       {
         _id: roomId,
-        "players._id": id,
+        "players.user": id,
       },
       {
         $set: {
