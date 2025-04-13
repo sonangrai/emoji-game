@@ -7,7 +7,7 @@ import {
   joinRoom,
   leaveRoom,
 } from "../controller/room";
-import { getChats } from "../controller/chat";
+import { getChats, sendMessage } from "../controller/chat";
 import validationCheck from "../utils/validation";
 
 const router = Router();
@@ -47,5 +47,13 @@ router.post(
 
 // Get chats
 router.get("/chats/:roomId", getChats);
+
+// Send message
+router.post(
+  "/chats/send/:roomId",
+  [check("_id").notEmpty().withMessage("User ID is required")],
+  validationCheck,
+  sendMessage
+);
 
 export default router;
