@@ -6,53 +6,38 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import React, { useEffect, useRef, useState } from "react";
 import { Room } from "../../../../packages/shared/src";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { leaveRoom } from "@/api/room";
 import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
 import { useRouter } from "next/navigation";
 import useRoom from "@/hooks/useRoom";
 import { queryClient } from "@/app/providers";
+import { sendMessage } from "@/api/chat";
+import useChat from "@/hooks/useChat";
 
 type ChatBoxType = {
   room: Room;
 };
 
 function ChatBox({ room }: ChatBoxType) {
+  const { chatData, isLoading } = useChat(room._id);
+
   const { roomEve } = useRoom();
   const router = useRouter();
   const msgRef = useRef<HTMLDivElement>(null);
   const player = getCookie("player");
   const playerId = player ? JSON.parse(player)._id : "";
   const [input, setInput] = useState<string>("");
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      message: "Do you liked the game?",
-      time: "12:00",
-      isSender: false,
-      system: false,
-      user: {
-        name: "John Doe",
-        image: "https://randomuser.me/api/portraits",
-      },
-    },
-    {
-      id: 2,
-      message: "Hey, I am loving this game so much 😄",
-      time: "12:08",
-      isSender: true,
-      system: false,
-      user: {
-        name: "Sonang Sencho",
-        image: "https://randomuser.me/api/portraits",
-      },
-    },
-  ]);
 
   const leaveRoomMutation = useMutation({
     mutationKey: ["leaveRoom"],
     mutationFn: leaveRoom,
+  });
+
+  const sendMessageMutation = useMutation({
+    mutationKey: ["sendMessage"],
+    mutationFn: sendMessage,
   });
 
   useEffect(() => {
@@ -62,7 +47,7 @@ function ChatBox({ room }: ChatBoxType) {
         behavior: "smooth",
       });
     }
-  }, [messages, input]);
+  }, [chatData, input]);
 
   useEffect(() => {
     queryClient.invalidateQueries({
@@ -72,22 +57,19 @@ function ChatBox({ room }: ChatBoxType) {
 
   function submitHandle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    setMessages([
-      ...messages,
+    sendMessageMutation.mutateAsync(
       {
-        id: messages.length + 1,
-        message: input,
-        time: new Date().toLocaleTimeString(),
-        isSender: true,
-        system: false,
-        user: {
-          name: "Sonang Sencho",
-          image: "https://randomuser.me/api/portraits",
-        },
+        text: input,
+        rid: room._id,
+        userid: playerId,
       },
-    ]);
-    setInput("");
+      {
+        onSuccess: () => {
+          setInput("");
+        },
+        onError: () => toast.error("Error sending message"),
+      }
+    );
   }
 
   const leaveRoomHandle = () => {
@@ -118,16 +100,26 @@ function ChatBox({ room }: ChatBoxType) {
           <LogOut />
         </Button>
       </div>
-      <div
-        className="max-h-full overflow-y-auto h-[calc(100%-80px)] no-scrollbar"
-        ref={msgRef}
-      >
-        <div className="flex flex-col py-4 justify-end gap-4">
-          {messages.map((message) => (
-            <ChatBubble key={message.id} {...message} />
-          ))}
+      {isLoading ? (
+        <>Loading...</>
+      ) : (
+        <div
+          className="max-h-full overflow-y-auto h-[calc(100%-80px)] no-scrollbar"
+          ref={msgRef}
+        >
+          <div className="flex flex-col py-4 justify-end gap-4">
+            {chatData && chatData.data ? (
+              chatData.data.map((chat) => (
+                <ChatBubble key={chat._id} {...chat} />
+              ))
+            ) : (
+              <p className="text-sm text-gray-400 text-center h-[200px] flex items-center justify-center">
+                Not Started
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <div className="sticky bottom-0 h-[50px]">
         <form className="flex gap-2 py-2" onSubmit={submitHandle}>
           <Input
@@ -135,7 +127,10 @@ function ChatBox({ room }: ChatBoxType) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
-          <Button type="submit" disabled={!input}>
+          <Button
+            type="submit"
+            disabled={!input || sendMessageMutation.isPending}
+          >
             <Send />
           </Button>
         </form>

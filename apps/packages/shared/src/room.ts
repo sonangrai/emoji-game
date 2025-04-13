@@ -29,3 +29,28 @@ export type RoomJoinPayload = {
   rid: string;
   userid: string;
 };
+
+export type ChatListType = {
+  _id: string;
+  text: string;
+  user: {
+    _id: string;
+    nickname: string;
+    email: string;
+    createdAt: string;
+  };
+  room: string;
+  createdAt: string;
+};
+
+export type ChatsResponse = {
+  data: ChatListType[];
+  status: number;
+  message: string;
+};
+
+export type MessagePayload = {
+  text: string;
+  rid: string;
+  userid: string;
+};
