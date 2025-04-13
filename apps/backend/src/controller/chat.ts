@@ -17,11 +17,9 @@ export const getChats = async (req: Request, res: Response) => {
     const chats = await Chat.find({ room: roomId }).populate("user");
 
     if (chats.length > 0) {
-      return res.status(200).send({
-        status: 200,
-        message: "Chats fetched successfully",
-        data: chats,
-      });
+      const resObj = new ResponseObj(200, chats, "Chats fetched");
+
+      return res.status(200).send(resObj);
     }
 
     return res.status(404).send({
