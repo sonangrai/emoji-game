@@ -51,10 +51,22 @@ function useRoom() {
       );
     });
 
+    // Toast Cleaner
+    const cleanerInterval = setTimeout(() => {
+      setRoomEve(
+        produce((draft) => {
+          const newRoomEve = draft as RoomEvent[];
+          newRoomEve.pop();
+          return newRoomEve;
+        })
+      );
+    }, 4000);
+
     return () => {
       socket.off("ROOM:JOIN");
       socket.off("ROOM:LEAVE");
       window.removeEventListener("beforeunload", listenDisconnect);
+      clearInterval(cleanerInterval);
     };
   }, [socket]);
 
