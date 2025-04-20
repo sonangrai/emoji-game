@@ -64,8 +64,8 @@ export const getMyRoom = async (req: Request, res: Response) => {
       "players.owner": true,
     })
       .limit(limit)
-      .skip(offset);
-
+      .skip(offset)
+      .sort("field -createdAt");
     if (room) {
       let respObject = new ResponseObj(200, room, "Room fetched successfully");
       respObject.setMeta(roomItemsLength, offset, limit);
