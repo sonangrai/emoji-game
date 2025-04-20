@@ -150,7 +150,7 @@ export const joinRoom = async (req: Request, res: Response) => {
         {
           $push: {
             players: {
-              _id: id,
+              user: id,
               owner: false,
               score: 0,
               online: true,
