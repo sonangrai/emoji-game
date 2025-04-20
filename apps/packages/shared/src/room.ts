@@ -27,6 +27,7 @@ export type RoomCreatePayload = {
 
 export type RoomJoinPayload = {
   rid: string;
+  pin?: string;
   userid: string;
 };
 
