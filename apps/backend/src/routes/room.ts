@@ -33,7 +33,6 @@ router.get("/detail/:id", getRoomById);
 // Join a room
 router.post("/join/:id", [
   check("_id").notEmpty().withMessage("User ID is required"),
-  check("pin").notEmpty().withMessage("Pin is required"),
   validationCheck,
   joinRoom,
 ]);

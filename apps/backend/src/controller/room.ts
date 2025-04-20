@@ -121,21 +121,6 @@ export const joinRoom = async (req: Request, res: Response) => {
   const id = req.body._id;
   const pin = req.body.pin;
 
-  // Checking password
-  try {
-    const room = await Room.findById(roomId);
-    if (room?.password !== pin)
-      return res
-        .status(401)
-        .send(new ResponseObj(401, {}, "PIN is not correct"));
-  } catch (error) {
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: error,
-    });
-  }
-
   const userData = await User.findById(id);
 
   try {
@@ -160,6 +145,21 @@ export const joinRoom = async (req: Request, res: Response) => {
         { new: true }
       );
     } else {
+      // Checking password
+      try {
+        const room = await Room.findById(roomId);
+        if (room?.password !== pin)
+          return res
+            .status(401)
+            .send(new ResponseObj(401, {}, "PIN is not correct"));
+      } catch (error) {
+        return res.status(500).send({
+          status: 500,
+          message: "Internal Server Error",
+          error: error,
+        });
+      }
+
       joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
