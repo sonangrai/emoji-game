@@ -15,6 +15,8 @@ import { useMutation } from "@tanstack/react-query";
 import { joinRoom } from "@/api/room";
 import { getCookie } from "@/lib/cookie";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const roomJoinSchema = z.object({
   roomId: z.string().nonempty("Room ID is required"),
@@ -22,6 +24,7 @@ const roomJoinSchema = z.object({
 });
 
 function JoinRoom() {
+  const router = useRouter();
   const player = getCookie("player");
   const joinRoomMutation = useMutation({
     mutationKey: ["join-room"],
@@ -29,6 +32,7 @@ function JoinRoom() {
   });
 
   const form = useForm<z.infer<typeof roomJoinSchema>>({
+    resolver: zodResolver(roomJoinSchema),
     defaultValues: {
       roomId: "",
       pin: "",
@@ -39,14 +43,20 @@ function JoinRoom() {
     const payload = {
       rid: values.roomId,
       userid: JSON.parse(player)._id as string,
+      pin: values.pin,
     };
 
     return joinRoomMutation.mutateAsync(payload, {
-      onSuccess: () => {
+      onSuccess: (resp) => {
         toast.success("Joined");
+        router.push(`/room/${resp.data._id}`);
       },
-      onError: () => {
-        toast.error("Failed to join room");
+      onError: (resp: any) => {
+        if (resp.msg) {
+          toast.error(resp.msg);
+        } else {
+          toast.error("Failed to join room");
+        }
       },
     });
   }

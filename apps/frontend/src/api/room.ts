@@ -64,10 +64,10 @@ export const getRoomById = async (id: string) => {
  * @returns
  */
 export const joinRoom = async (payload: RoomJoinPayload) => {
-  const { rid, userid } = payload;
+  const { rid, pin, userid } = payload;
   const res = await fetch(`${API_URL}/room/join/${rid}`, {
     method: "POST",
-    body: JSON.stringify({ _id: userid }),
+    body: JSON.stringify({ _id: userid, pin: pin }),
     headers: {
       "Content-Type": "application/json",
     },
