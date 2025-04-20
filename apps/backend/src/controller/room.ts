@@ -146,7 +146,6 @@ export const joinRoom = async (req: Request, res: Response) => {
       joinResponse = await Room.findOneAndUpdate(
         {
           _id: roomId,
-          "players.user": id,
         },
         {
           $push: {
