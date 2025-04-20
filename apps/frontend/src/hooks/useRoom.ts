@@ -51,7 +51,15 @@ function useRoom() {
       );
     });
 
-    // Toast Cleaner
+    return () => {
+      socket.off("ROOM:JOIN");
+      socket.off("ROOM:LEAVE");
+      window.removeEventListener("beforeunload", listenDisconnect);
+    };
+  }, [socket]);
+
+  // Toast cleaner
+  useEffect(() => {
     const cleanerInterval = setTimeout(() => {
       setRoomEve(
         produce((draft) => {
@@ -62,13 +70,8 @@ function useRoom() {
       );
     }, 4000);
 
-    return () => {
-      socket.off("ROOM:JOIN");
-      socket.off("ROOM:LEAVE");
-      window.removeEventListener("beforeunload", listenDisconnect);
-      clearInterval(cleanerInterval);
-    };
-  }, [socket]);
+    return () => clearInterval(cleanerInterval);
+  }, [roomEve]);
 
   return {
     roomEve,
