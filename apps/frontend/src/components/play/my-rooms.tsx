@@ -7,6 +7,7 @@ import { Room } from "../../../../packages/shared/src";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 function MyRooms() {
   const router = useRouter();
@@ -53,8 +54,20 @@ function MyRooms() {
               className="flex items-center justify-between px-4 py-2 border rounded-md"
             >
               <div className="flex items-center gap-1">
-                <h3 className="text-md">{room.name}</h3>
-                <p className="text-xs">({room.players.length}) p</p>
+                <h3
+                  className={cn(
+                    "text-md",
+
+                    room.players.some(
+                      (el) => el.owner && el.user === JSON.parse(player)._id
+                    ) && "font-bold"
+                  )}
+                >
+                  {room.name}
+                </h3>
+                <p className="text-xs">
+                  ({room.players.filter((el) => el.online).length}) p
+                </p>
               </div>
               <div>
                 <Button
