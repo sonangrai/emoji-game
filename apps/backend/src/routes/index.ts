@@ -12,6 +12,6 @@ router.use("/user", user);
 router.use("/room", room);
 
 //EMOJIS ROUTES
-// router.use("/emojis", emojis);
+router.use("/emoji", emojis);
 
 export default router;
