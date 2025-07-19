@@ -4,11 +4,17 @@ import ChatBox from "./chat-box";
 import { getRoomById } from "@/api/room";
 import RoomEvent from "./room-event";
 import RoomPlayers from "./room-players";
+import { getEmoji } from "@/api/emoji";
 
 function RoomPage({ id }: { id: string }) {
   const { data: roomData, isLoading } = useQuery({
     queryKey: ["room", id],
     queryFn: () => getRoomById(id),
+  });
+
+  const { data: gameEmoji } = useQuery({
+    queryKey: ["emojis"],
+    queryFn: getEmoji,
   });
 
   if (isLoading) return null;

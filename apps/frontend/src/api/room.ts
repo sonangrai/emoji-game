@@ -1,8 +1,6 @@
-import {
-  RoomCreatePayload,
-  RoomJoinPayload,
-} from "../../../packages/shared/src";
 import { API_URL } from "./config";
+
+import { RoomCreatePayload, RoomJoinPayload, TResponse } from "@/types";
 
 /**
  * Fetching rooms created by user with id
@@ -44,7 +42,14 @@ export const createRoom = async (payload: RoomCreatePayload) => {
  * @param id
  * @returns
  */
-export const getRoomById = async (id: string) => {
+export const getRoomById = async (
+  id: string
+): Promise<
+  | (Omit<TResponse, "data"> & {
+      data: Room;
+    })
+  | Error
+> => {
   const res = await fetch(`${API_URL}/room/detail/${id}`, {
     method: "GET",
   });
