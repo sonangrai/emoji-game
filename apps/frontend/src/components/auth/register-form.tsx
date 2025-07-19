@@ -20,8 +20,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { TRegisterPayload } from "@/types";
 
-const registerSchema = z.object({
+const registerSchema: z.ZodType<TRegisterPayload> = z.object({
   nickname: z.string().min(4),
   email: z.string().email(),
   pin: z.string().min(6).max(6),
