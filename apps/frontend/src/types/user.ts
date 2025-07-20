@@ -5,8 +5,10 @@ export type TLoginPayload = {
 };
 
 // Payload type for registering
-export type TRegisterPayload = TLoginPayload & {
+export type TRegisterPayload = {
   nickname: string;
+  email: string;
+  pin: string;
 };
 
 export type TUser = {
