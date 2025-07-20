@@ -47,14 +47,7 @@ export const createRoom = async (payload: TRoomCreatePayload) => {
  * @param id
  * @returns
  */
-export const getRoomById = async (
-  id: string
-): Promise<
-  | (Omit<TResponse, "data"> & {
-      data: TRoom;
-    })
-  | Error
-> => {
+export const getRoomById = async (id: string): Promise<TResponse<TRoom>> => {
   const res = await fetch(`${API_URL}/room/detail/${id}`, {
     method: "GET",
   });

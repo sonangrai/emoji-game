@@ -7,7 +7,11 @@ import RoomPlayers from "./room-players";
 import { getEmoji } from "@/api/emoji";
 
 function RoomPage({ id }: { id: string }) {
-  const { data: roomData, isLoading } = useQuery({
+  const {
+    data: roomData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["room", id],
     queryFn: () => getRoomById(id),
   });
@@ -17,17 +21,15 @@ function RoomPage({ id }: { id: string }) {
     queryFn: getEmoji,
   });
 
-  if (isLoading) return null;
+  if (isLoading && !isError) return null;
 
   return (
     <div className="border rounded-lg p-2">
       <div className="flex gap-2">
         <div className="w-lg">
-          <RoomPlayers room={roomData.data} />
+          {roomData && !isError && <RoomPlayers room={roomData.data} />}
         </div>
-        <div>
-          <ChatBox room={roomData.data} />
-        </div>
+        <div>{roomData && !isError && <ChatBox room={roomData.data} />}</div>
       </div>
 
       <RoomEvent />
