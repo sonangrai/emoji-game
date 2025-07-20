@@ -1,6 +1,11 @@
 import { API_URL } from "./config";
 
-import { RoomCreatePayload, RoomJoinPayload, TResponse } from "@/types";
+import {
+  TRoomCreatePayload,
+  TRoomJoinPayload,
+  TRoom,
+  TResponse,
+} from "@/types";
 
 /**
  * Fetching rooms created by user with id
@@ -20,7 +25,7 @@ export const getMyRooms = async (id: string) => {
  * @param payload
  * @returns
  */
-export const createRoom = async (payload: RoomCreatePayload) => {
+export const createRoom = async (payload: TRoomCreatePayload) => {
   const res = await fetch(`${API_URL}/room`, {
     method: "POST",
     body: JSON.stringify(payload),
@@ -46,7 +51,7 @@ export const getRoomById = async (
   id: string
 ): Promise<
   | (Omit<TResponse, "data"> & {
-      data: Room;
+      data: TRoom;
     })
   | Error
 > => {
@@ -68,7 +73,7 @@ export const getRoomById = async (
  * @param userid
  * @returns
  */
-export const joinRoom = async (payload: RoomJoinPayload) => {
+export const joinRoom = async (payload: TRoomJoinPayload) => {
   const { rid, pin, userid } = payload;
   const res = await fetch(`${API_URL}/room/join/${rid}`, {
     method: "POST",
@@ -92,7 +97,7 @@ export const joinRoom = async (payload: RoomJoinPayload) => {
  * @param userid
  * @returns
  */
-export const leaveRoom = async (payload: RoomJoinPayload) => {
+export const leaveRoom = async (payload: TRoomJoinPayload) => {
   const { rid, userid } = payload;
   const res = await fetch(`${API_URL}/room/leave/${rid}`, {
     method: "POST",
