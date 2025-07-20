@@ -5,8 +5,7 @@ import ChatBubble from "../common/chat-bubble";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import React, { useEffect, useRef, useState } from "react";
-import { Room } from "../../../../packages/shared/src";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { leaveRoom } from "@/api/room";
 import { toast } from "sonner";
 import { getCookie } from "@/lib/cookie";
@@ -15,9 +14,10 @@ import useRoom from "@/hooks/useRoom";
 import { queryClient } from "@/app/providers";
 import { sendMessage } from "@/api/chat";
 import useChat from "@/hooks/useChat";
+import { TRoom } from "@/types";
 
 type ChatBoxType = {
-  room: Room;
+  room: TRoom;
 };
 
 function ChatBox({ room }: ChatBoxType) {
@@ -108,7 +108,7 @@ function ChatBox({ room }: ChatBoxType) {
           ref={msgRef}
         >
           <div className="flex flex-col py-4 justify-end gap-4">
-            {chatData && chatData.data ? (
+            {chatData ? (
               chatData.data.map((chat) => (
                 <ChatBubble key={chat._id} {...chat} />
               ))

@@ -1,12 +1,15 @@
 import { TChatResponse, TMessagePayload } from "@/types/chat";
 import { API_URL } from "./config";
+import { TResponse } from "@/types";
 
 /**
  * Fetching room chats
  * @param id
  * @returns List of rooms
  */
-export const getChats = async (id: string): Promise<TChatResponse> => {
+export const getChats = async (
+  id: string
+): Promise<TResponse<TChatResponse[]>> => {
   const res = await fetch(`${API_URL}/room/chats/${id}`, {
     method: "GET",
   });
