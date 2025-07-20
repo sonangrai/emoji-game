@@ -1,6 +1,6 @@
 // Payload type for login
 export type TLoginPayload = {
-  email: string;
+  authType: string;
   pin: string;
 };
 

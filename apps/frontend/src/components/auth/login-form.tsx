@@ -20,8 +20,9 @@ import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/api/user";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { TLoginPayload } from "@/types";
 
-const registerSchema = z.object({
+const registerSchema: z.ZodType<TLoginPayload> = z.object({
   authType: z.string().min(1),
   pin: z.string().min(1),
 });
