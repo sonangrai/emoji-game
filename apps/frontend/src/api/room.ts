@@ -12,7 +12,7 @@ import {
  * @param id
  * @returns List of rooms
  */
-export const getMyRooms = async (id: string) => {
+export const getMyRooms = async (id: string): Promise<TResponse<TRoom[]>> => {
   const res = await fetch(`${API_URL}/room/${id}`, {
     method: "GET",
   });

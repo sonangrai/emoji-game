@@ -3,7 +3,6 @@ import { getMyRooms, joinRoom } from "@/api/room";
 import { getCookie } from "@/lib/cookie";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { Room } from "../../../../packages/shared/src";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -48,7 +47,7 @@ function MyRooms() {
 
       <CardContent>
         <div className="flex flex-col gap-2">
-          {data?.data?.map((room: Room) => (
+          {data?.data?.map((room) => (
             <div
               key={room._id}
               className="flex items-center justify-between px-4 py-2 border rounded-md"
@@ -81,7 +80,7 @@ function MyRooms() {
             </div>
           ))}
 
-          {data.data.length === 0 && (
+          {data?.data.length === 0 && (
             <div className="flex items-center justify-center w-full h-full">
               <h3 className="text-md">You don't have any rooms</h3>
             </div>

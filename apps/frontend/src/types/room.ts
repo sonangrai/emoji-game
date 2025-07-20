@@ -5,9 +5,8 @@ export type TRoomCreatePayload = {
 };
 
 export type TRoomJoinPayload = {
-  _id: string;
   rid: string;
-  pin: string;
+  pin?: string;
   userid: string;
 };
 
