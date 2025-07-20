@@ -1,5 +1,4 @@
-import { text } from "stream/consumers";
-import { ChatsResponse, MessagePayload } from "../../../packages/shared/src";
+import { TChatResponse, TMessagePayload } from "@/types/chat";
 import { API_URL } from "./config";
 
 /**
@@ -7,7 +6,7 @@ import { API_URL } from "./config";
  * @param id
  * @returns List of rooms
  */
-export const getChats = async (id: string): Promise<ChatsResponse> => {
+export const getChats = async (id: string): Promise<TChatResponse> => {
   const res = await fetch(`${API_URL}/room/chats/${id}`, {
     method: "GET",
   });
@@ -25,7 +24,7 @@ export const getChats = async (id: string): Promise<ChatsResponse> => {
  * @param payload
  * @returns
  */
-export const sendMessage = async (payload: MessagePayload) => {
+export const sendMessage = async (payload: TMessagePayload) => {
   const res = await fetch(`${API_URL}/room/chats/send/${payload.rid}`, {
     method: "POST",
     headers: {
